@@ -1,0 +1,488 @@
+                                 OLS Regression Results                                
+=======================================================================================
+Dep. Variable:           booking_bool   R-squared (uncentered):                   0.842
+Model:                            OLS   Adj. R-squared (uncentered):              0.838
+Method:                 Least Squares   F-statistic:                              225.5
+Date:                Wed, 05 May 2021   Prob (F-statistic):                        0.00
+Time:                        17:27:13   Log-Likelihood:                          12909.
+No. Observations:               10008   AIC:                                 -2.536e+04
+Df Residuals:                    9777   BIC:                                 -2.369e+04
+Df Model:                         231                                                  
+Covariance Type:            nonrobust                                                  
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1          3.475e-05      0.000      0.334      0.739      -0.000       0.000
+x2          1.373e-05   9.76e-05      0.141      0.888      -0.000       0.000
+x3            -0.0007      0.005     -0.133      0.895      -0.011       0.010
+x4            -0.0013      0.004     -0.310      0.757      -0.009       0.007
+x5             0.0218      0.012      1.791      0.073      -0.002       0.046
+x6            -0.0018      0.004     -0.460      0.645      -0.009       0.006
+x7             0.0620      0.045      1.391      0.164      -0.025       0.149
+x8            -0.0057      0.003     -1.655      0.098      -0.012       0.001
+x9            -0.0003      0.000     -0.715      0.475      -0.001       0.001
+x10         1.504e-05   5.59e-05      0.269      0.788   -9.45e-05       0.000
+x11            0.0116      0.015      0.792      0.428      -0.017       0.040
+x12          1.01e-06   7.05e-07      1.431      0.152   -3.73e-07    2.39e-06
+x13            0.0059      0.004      1.343      0.179      -0.003       0.015
+x14         1.124e-05      0.000      0.083      0.934      -0.000       0.000
+x15           -0.0091      0.007     -1.231      0.218      -0.024       0.005
+x16           -0.0050      0.009     -0.549      0.583      -0.023       0.013
+x17            0.0045      0.018      0.259      0.796      -0.030       0.039
+x18           -0.0058      0.012     -0.468      0.639      -0.030       0.019
+x19         1.176e-06   3.87e-06      0.304      0.761    -6.4e-06    8.76e-06
+x20            0.0001      0.013      0.009      0.993      -0.026       0.026
+x21            0.4768      0.026     18.206      0.000       0.425       0.528
+x22         8.983e-09   2.08e-07      0.043      0.966   -3.98e-07    4.16e-07
+x23        -6.355e-06   1.48e-05     -0.428      0.669   -3.55e-05    2.27e-05
+x24          1.63e-06   1.26e-05      0.129      0.897   -2.31e-05    2.64e-05
+x25         4.688e-06   2.87e-05      0.163      0.870   -5.15e-05    6.09e-05
+x26        -1.967e-06   1.09e-05     -0.180      0.857   -2.34e-05    1.94e-05
+x27         4.905e-05      0.000      0.422      0.673      -0.000       0.000
+x28         2.703e-06   1.03e-05      0.263      0.793   -1.75e-05    2.29e-05
+x29         1.866e-07   1.23e-06      0.151      0.880   -2.23e-06     2.6e-06
+x30        -5.635e-08   1.33e-07     -0.425      0.671   -3.16e-07    2.03e-07
+x31        -4.096e-05   3.04e-05     -1.349      0.177      -0.000    1.86e-05
+x32         1.252e-09   1.92e-09      0.654      0.513    -2.5e-09    5.01e-09
+x33        -2.223e-06   9.95e-06     -0.223      0.823   -2.17e-05    1.73e-05
+x34        -1.464e-07   2.97e-07     -0.493      0.622   -7.29e-07    4.36e-07
+x35        -1.525e-05   1.83e-05     -0.835      0.404   -5.11e-05    2.05e-05
+x36        -8.621e-08   2.38e-05     -0.004      0.997   -4.67e-05    4.66e-05
+x37        -1.331e-05   5.26e-05     -0.253      0.800      -0.000    8.97e-05
+x38        -3.083e-05   3.28e-05     -0.939      0.348   -9.52e-05    3.35e-05
+x39         5.826e-09    8.6e-09      0.678      0.498    -1.1e-08    2.27e-08
+x40         5.478e-05   3.65e-05      1.499      0.134   -1.68e-05       0.000
+x41           -0.0002   5.93e-05     -2.694      0.007      -0.000   -4.35e-05
+x42         8.943e-06    1.5e-05      0.596      0.551   -2.05e-05    3.83e-05
+x43          7.66e-06   1.26e-05      0.609      0.543    -1.7e-05    3.23e-05
+x44        -4.775e-05   2.79e-05     -1.712      0.087      -0.000    6.92e-06
+x45        -8.786e-06   1.03e-05     -0.852      0.394    -2.9e-05    1.14e-05
+x46         5.185e-05      0.000      0.433      0.665      -0.000       0.000
+x47         3.422e-06   1.04e-05      0.328      0.743    -1.7e-05    2.39e-05
+x48        -3.291e-07   1.27e-06     -0.260      0.795   -2.81e-06    2.16e-06
+x49        -9.565e-08   1.09e-07     -0.880      0.379   -3.09e-07    1.17e-07
+x50        -4.131e-05   3.03e-05     -1.361      0.173      -0.000    1.82e-05
+x51        -2.091e-09   1.97e-09     -1.063      0.288   -5.95e-09    1.76e-09
+x52         -1.53e-05   1.06e-05     -1.446      0.148    -3.6e-05    5.44e-06
+x53         3.407e-07   2.91e-07      1.172      0.241   -2.29e-07    9.11e-07
+x54         2.806e-05    1.9e-05      1.475      0.140   -9.23e-06    6.53e-05
+x55        -3.292e-05   2.78e-05     -1.183      0.237   -8.75e-05    2.16e-05
+x56        -4.525e-06    5.7e-05     -0.079      0.937      -0.000       0.000
+x57         1.339e-05   3.43e-05      0.390      0.696   -5.39e-05    8.07e-05
+x58         7.368e-09   7.27e-09      1.014      0.311   -6.87e-09    2.16e-08
+x59        -3.979e-05   3.58e-05     -1.113      0.266      -0.000    3.03e-05
+x60            0.0002   6.14e-05      3.091      0.002    6.94e-05       0.000
+x61            0.0003      0.001      0.439      0.660      -0.001       0.001
+x62           -0.0007      0.002     -0.381      0.703      -0.004       0.003
+x63         7.309e-05      0.001      0.136      0.892      -0.001       0.001
+x64           -0.0108      0.006     -1.691      0.091      -0.023       0.002
+x65           -0.0001      0.000     -0.227      0.821      -0.001       0.001
+x66         5.435e-07   7.95e-05      0.007      0.995      -0.000       0.000
+x67         4.448e-06    5.8e-06      0.767      0.443   -6.91e-06    1.58e-05
+x68           -0.0021      0.002     -0.938      0.348      -0.007       0.002
+x69        -9.155e-09   1.04e-07     -0.088      0.930   -2.13e-07    1.94e-07
+x70         1.868e-05      0.001      0.032      0.974      -0.001       0.001
+x71        -2.142e-06   1.56e-05     -0.137      0.891   -3.28e-05    2.85e-05
+x72           -0.0008      0.001     -0.699      0.484      -0.003       0.001
+x73            0.0004      0.001      0.308      0.758      -0.002       0.003
+x74            0.0029      0.003      0.987      0.323      -0.003       0.009
+x75           -0.0002      0.002     -0.135      0.892      -0.004       0.003
+x76         -1.62e-07   4.44e-07     -0.365      0.715   -1.03e-06    7.08e-07
+x77           -0.0009      0.002     -0.517      0.605      -0.004       0.003
+x78            0.0088      0.004      1.960      0.050   -3.61e-07       0.018
+x79           -0.0023      0.002     -1.318      0.188      -0.006       0.001
+x80        -9.131e-05      0.000     -0.183      0.855      -0.001       0.001
+x81           -0.0004      0.007     -0.052      0.959      -0.015       0.014
+x82            0.0004      0.000      0.955      0.340      -0.000       0.001
+x83         1.261e-05   7.43e-05      0.170      0.865      -0.000       0.000
+x84        -4.156e-06   4.97e-06     -0.836      0.403   -1.39e-05    5.59e-06
+x85           -0.0002      0.002     -0.082      0.934      -0.005       0.004
+x86        -6.514e-08   9.26e-08     -0.703      0.482   -2.47e-07    1.16e-07
+x87           -0.0006      0.001     -1.229      0.219      -0.002       0.000
+x88         5.997e-06   1.38e-05      0.436      0.663    -2.1e-05     3.3e-05
+x89            0.0002      0.001      0.198      0.843      -0.002       0.002
+x90            0.0020      0.001      1.637      0.102      -0.000       0.004
+x91           -0.0003      0.002     -0.163      0.871      -0.004       0.004
+x92            0.0021      0.002      1.265      0.206      -0.001       0.005
+x93        -2.174e-07   3.62e-07     -0.601      0.548   -9.27e-07    4.92e-07
+x94           -0.0002      0.002     -0.116      0.907      -0.003       0.003
+x95            0.0533      0.005     11.380      0.000       0.044       0.062
+x96           -0.0014      0.001     -1.101      0.271      -0.004       0.001
+x97            0.0097      0.013      0.750      0.453      -0.016       0.035
+x98            0.0005      0.001      0.474      0.636      -0.002       0.003
+x99        -7.075e-05      0.000     -0.446      0.656      -0.000       0.000
+x100        8.615e-06   1.47e-05      0.586      0.558   -2.02e-05    3.74e-05
+x101           0.0021      0.004      0.561      0.575      -0.005       0.009
+x102       -3.306e-07   2.07e-07     -1.600      0.110   -7.36e-07    7.43e-08
+x103           0.0012      0.001      1.187      0.235      -0.001       0.003
+x104       -4.946e-06   3.61e-05     -0.137      0.891   -7.58e-05    6.59e-05
+x105           0.0026      0.002      1.143      0.253      -0.002       0.007
+x106          -0.0016      0.002     -0.675      0.500      -0.006       0.003
+x107          -0.0070      0.005     -1.375      0.169      -0.017       0.003
+x108           0.0059      0.003      1.692      0.091      -0.001       0.013
+x109       -6.298e-07    9.1e-07     -0.692      0.489   -2.41e-06    1.15e-06
+x110          -0.0050      0.004     -1.388      0.165      -0.012       0.002
+x111          -0.0023      0.007     -0.314      0.754      -0.017       0.012
+x112          -0.0017      0.004     -0.400      0.689      -0.010       0.007
+x113           0.0003      0.000      0.851      0.395      -0.000       0.001
+x114        4.728e-05   5.48e-05      0.862      0.389   -6.02e-05       0.000
+x115       -5.574e-06   4.19e-06     -1.331      0.183   -1.38e-05    2.64e-06
+x116           0.0009      0.001      0.628      0.530      -0.002       0.004
+x117        1.569e-08   7.14e-08      0.220      0.826   -1.24e-07    1.56e-07
+x118       -8.501e-05      0.000     -0.207      0.836      -0.001       0.001
+x119        2.395e-06   1.24e-05      0.193      0.847   -2.19e-05    2.67e-05
+x120           0.0010      0.001      1.144      0.253      -0.001       0.003
+x121          -0.0012      0.001     -1.248      0.212      -0.003       0.001
+x122           0.0007      0.002      0.360      0.719      -0.003       0.004
+x123           0.0005      0.001      0.415      0.678      -0.002       0.003
+x124        5.784e-08   3.34e-07      0.173      0.863   -5.97e-07    7.13e-07
+x125           0.0005      0.001      0.393      0.695      -0.002       0.003
+x126          -0.0043      0.003     -1.633      0.103      -0.009       0.001
+x127          -0.0002      0.004     -0.045      0.964      -0.008       0.008
+x128          -0.0002      0.001     -0.347      0.728      -0.001       0.001
+x129        6.771e-05   6.16e-05      1.098      0.272   -5.31e-05       0.000
+x130           0.0267      0.013      1.977      0.048       0.000       0.053
+x131       -1.174e-06   6.98e-07     -1.680      0.093   -2.54e-06    1.95e-07
+x132           0.0022      0.003      0.652      0.514      -0.004       0.009
+x133           0.0001      0.000      0.897      0.370      -0.000       0.000
+x134          -0.0008      0.008     -0.097      0.922      -0.017       0.015
+x135           0.0069      0.010      0.705      0.481      -0.012       0.026
+x136          -0.0288      0.020     -1.432      0.152      -0.068       0.011
+x137           0.0027      0.013      0.212      0.832      -0.022       0.027
+x138       -1.026e-06   3.57e-06     -0.287      0.774   -8.03e-06    5.97e-06
+x139          -0.0279      0.014     -2.003      0.045      -0.055      -0.001
+x140           0.1890      0.021      8.979      0.000       0.148       0.230
+x141        2.807e-05   4.49e-05      0.626      0.532   -5.99e-05       0.000
+x142        5.712e-06   5.34e-06      1.070      0.284   -4.75e-06    1.62e-05
+x143           0.0006      0.001      0.514      0.607      -0.002       0.003
+x144       -1.567e-09   6.55e-08     -0.024      0.981    -1.3e-07    1.27e-07
+x145           0.0002      0.000      0.455      0.649      -0.001       0.001
+x146        7.687e-06    1.3e-05      0.591      0.555   -1.78e-05    3.32e-05
+x147           0.0002      0.001      0.279      0.780      -0.001       0.002
+x148           0.0007      0.001      0.862      0.389      -0.001       0.002
+x149          -0.0007      0.002     -0.336      0.737      -0.005       0.003
+x150          -0.0002      0.001     -0.206      0.837      -0.003       0.002
+x151        6.857e-08   5.35e-07      0.128      0.898    -9.8e-07    1.12e-06
+x152           0.0002      0.001      0.216      0.829      -0.002       0.002
+x153           0.0019      0.002      0.903      0.366      -0.002       0.006
+x154        -2.45e-07      7e-07     -0.350      0.726   -1.62e-06    1.13e-06
+x155       -7.376e-05      0.000     -0.428      0.669      -0.000       0.000
+x156       -2.085e-11   8.73e-09     -0.002      0.998   -1.71e-08    1.71e-08
+x157       -9.786e-06   4.09e-05     -0.239      0.811   -8.99e-05    7.03e-05
+x158       -2.088e-06    1.5e-06     -1.393      0.164   -5.03e-06    8.51e-07
+x159           0.0001   9.39e-05      1.403      0.161   -5.23e-05       0.000
+x160        5.795e-05   9.92e-05      0.584      0.559      -0.000       0.000
+x161       -5.399e-06      0.000     -0.025      0.980      -0.000       0.000
+x162           0.0001      0.000      0.960      0.337      -0.000       0.000
+x163       -2.881e-08   4.01e-08     -0.719      0.472   -1.07e-07    4.98e-08
+x164          -0.0001      0.000     -0.961      0.337      -0.000       0.000
+x165           0.0011      0.000      2.583      0.010       0.000       0.002
+x166       -4.923e-06   1.67e-05     -0.294      0.769   -3.77e-05    2.79e-05
+x167        1.029e-10   9.27e-10      0.111      0.912   -1.71e-09    1.92e-09
+x168       -3.949e-06   4.05e-06     -0.976      0.329   -1.19e-05    3.98e-06
+x169       -4.807e-08   1.16e-07     -0.415      0.678   -2.75e-07    1.79e-07
+x170         1.17e-05      8e-06      1.462      0.144   -3.99e-06    2.74e-05
+x171       -2.603e-05   1.16e-05     -2.241      0.025   -4.88e-05   -3.26e-06
+x172       -6.556e-06   2.84e-05     -0.231      0.817   -6.22e-05    4.91e-05
+x173       -1.344e-05   1.62e-05     -0.832      0.406   -4.51e-05    1.82e-05
+x174       -3.114e-09   4.55e-09     -0.685      0.493    -1.2e-08     5.8e-09
+x175       -7.068e-06   1.52e-05     -0.465      0.642   -3.68e-05    2.27e-05
+x176        2.538e-05   3.57e-05      0.711      0.477   -4.46e-05    9.54e-05
+x177         5.16e-07   2.23e-07      2.312      0.021    7.85e-08    9.54e-07
+x178          -0.0007      0.001     -0.646      0.519      -0.003       0.001
+x179       -6.473e-05   4.16e-05     -1.556      0.120      -0.000    1.68e-05
+x180           0.0029      0.002      1.172      0.241      -0.002       0.008
+x181          -0.0025      0.003     -0.894      0.371      -0.008       0.003
+x182          -0.0074      0.006     -1.290      0.197      -0.019       0.004
+x183           0.0027      0.004      0.709      0.478      -0.005       0.010
+x184       -2.871e-07    9.6e-07     -0.299      0.765   -2.17e-06     1.6e-06
+x185           0.0038      0.004      0.956      0.339      -0.004       0.012
+x186           0.0383      0.008      5.084      0.000       0.024       0.053
+x187        -5.76e-08   7.61e-08     -0.757      0.449   -2.07e-07    9.16e-08
+x188         1.12e-09   2.11e-09      0.532      0.595   -3.01e-09    5.25e-09
+x189       -8.475e-09   1.46e-07     -0.058      0.954   -2.95e-07    2.78e-07
+x190       -1.178e-07   1.44e-07     -0.816      0.414   -4.01e-07    1.65e-07
+x191       -1.516e-09   4.28e-07     -0.004      0.997   -8.41e-07    8.38e-07
+x192       -2.976e-07   2.14e-07     -1.394      0.163   -7.16e-07    1.21e-07
+x193       -1.553e-10   6.81e-11     -2.281      0.023   -2.89e-10   -2.18e-11
+x194       -7.896e-08   2.23e-07     -0.354      0.723   -5.16e-07    3.58e-07
+x195        2.952e-07   4.24e-07      0.696      0.487   -5.36e-07    1.13e-06
+x196        3.151e-05   1.24e-05      2.541      0.011     7.2e-06    5.58e-05
+x197          -0.0016      0.001     -1.835      0.067      -0.003       0.000
+x198          -0.0005      0.001     -0.534      0.593      -0.002       0.001
+x199           0.0018      0.002      0.863      0.388      -0.002       0.006
+x200          -0.0012      0.001     -0.861      0.389      -0.004       0.002
+x201        5.648e-07   2.91e-07      1.942      0.052   -5.32e-09    1.13e-06
+x202          -0.0016      0.001     -1.581      0.114      -0.004       0.000
+x203          -0.0160      0.002     -7.541      0.000      -0.020      -0.012
+x204       -3.604e-05   2.08e-05     -1.734      0.083   -7.68e-05    4.69e-06
+x205        2.775e-05   2.26e-05      1.230      0.219   -1.65e-05     7.2e-05
+x206       -5.883e-05   7.33e-05     -0.802      0.422      -0.000    8.49e-05
+x207        5.226e-05   4.32e-05      1.210      0.226   -3.24e-05       0.000
+x208       -1.236e-08   8.63e-09     -1.433      0.152   -2.93e-08    4.55e-09
+x209       -7.609e-05   3.61e-05     -2.108      0.035      -0.000   -5.32e-06
+x210          -0.0002   6.66e-05     -3.389      0.001      -0.000   -9.52e-05
+x211           0.0022      0.002      1.194      0.233      -0.001       0.006
+x212        2.786e-05      0.001      0.020      0.984      -0.003       0.003
+x213          -0.0017      0.003     -0.663      0.507      -0.007       0.003
+x214        6.561e-07   7.09e-07      0.925      0.355   -7.34e-07    2.05e-06
+x215           0.0079      0.002      3.279      0.001       0.003       0.013
+x216           0.0097      0.004      2.244      0.025       0.001       0.018
+x217           0.0007      0.003      0.208      0.836      -0.006       0.008
+x218           0.0002      0.002      0.094      0.925      -0.005       0.005
+x219        5.351e-07   1.23e-06      0.436      0.663   -1.87e-06    2.94e-06
+x220           0.0010      0.002      0.411      0.681      -0.004       0.006
+x221           0.0079      0.005      1.659      0.097      -0.001       0.017
+x222           0.0039      0.007      0.590      0.555      -0.009       0.017
+x223       -7.192e-07   1.49e-06     -0.483      0.629   -3.64e-06     2.2e-06
+x224           0.0001      0.008      0.017      0.987      -0.015       0.015
+x225           0.1146      0.010     11.774      0.000       0.095       0.134
+x226        1.845e-06   1.13e-06      1.639      0.101   -3.61e-07    4.05e-06
+x227          -0.0004      0.004     -0.113      0.910      -0.008       0.007
+x228          -0.0262      0.007     -3.708      0.000      -0.040      -0.012
+x229       -1.776e-06   1.08e-06     -1.651      0.099   -3.88e-06    3.32e-07
+x230       -8.177e-07   1.78e-06     -0.460      0.646    -4.3e-06    2.67e-06
+x231          -0.7297      0.008    -97.131      0.000      -0.744      -0.715
+==============================================================================
+Omnibus:                     9312.347   Durbin-Watson:                   2.034
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):          6713000.632
+Skew:                          -3.495   Prob(JB):                         0.00
+Kurtosis:                     129.687   Cond. No.                     2.56e+09
+==============================================================================
+
+Notes:
+[1] R² is computed without centering (uncentered) since the model does not contain a constant.
+[2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[3] The condition number is large, 2.56e+09. This might indicate that there are
+strong multicollinearity or other numerical problems.
+visitor_location_country_id
+prop_country_id
+prop_starrating
+prop_review_score
+prop_brand_bool
+prop_location_score1
+prop_location_score2
+prop_log_historical_price
+position
+price_usd
+promotion_flag
+srch_destination_id
+srch_length_of_stay
+srch_booking_window
+srch_adults_count
+srch_children_count
+srch_room_count
+srch_saturday_night_bool
+orig_destination_distance
+random_bool
+click_bool
+visitor_location_country_id x prop_country_id
+visitor_location_country_id x prop_starrating
+visitor_location_country_id x prop_review_score
+visitor_location_country_id x prop_brand_bool
+visitor_location_country_id x prop_location_score1
+visitor_location_country_id x prop_location_score2
+visitor_location_country_id x prop_log_historical_price
+visitor_location_country_id x position
+visitor_location_country_id x price_usd
+visitor_location_country_id x promotion_flag
+visitor_location_country_id x srch_destination_id
+visitor_location_country_id x srch_length_of_stay
+visitor_location_country_id x srch_booking_window
+visitor_location_country_id x srch_adults_count
+visitor_location_country_id x srch_children_count
+visitor_location_country_id x srch_room_count
+visitor_location_country_id x srch_saturday_night_bool
+visitor_location_country_id x orig_destination_distance
+visitor_location_country_id x random_bool
+visitor_location_country_id x click_bool
+prop_country_id x prop_starrating
+prop_country_id x prop_review_score
+prop_country_id x prop_brand_bool
+prop_country_id x prop_location_score1
+prop_country_id x prop_location_score2
+prop_country_id x prop_log_historical_price
+prop_country_id x position
+prop_country_id x price_usd
+prop_country_id x promotion_flag
+prop_country_id x srch_destination_id
+prop_country_id x srch_length_of_stay
+prop_country_id x srch_booking_window
+prop_country_id x srch_adults_count
+prop_country_id x srch_children_count
+prop_country_id x srch_room_count
+prop_country_id x srch_saturday_night_bool
+prop_country_id x orig_destination_distance
+prop_country_id x random_bool
+prop_country_id x click_bool
+prop_starrating x prop_review_score
+prop_starrating x prop_brand_bool
+prop_starrating x prop_location_score1
+prop_starrating x prop_location_score2
+prop_starrating x prop_log_historical_price
+prop_starrating x position
+prop_starrating x price_usd
+prop_starrating x promotion_flag
+prop_starrating x srch_destination_id
+prop_starrating x srch_length_of_stay
+prop_starrating x srch_booking_window
+prop_starrating x srch_adults_count
+prop_starrating x srch_children_count
+prop_starrating x srch_room_count
+prop_starrating x srch_saturday_night_bool
+prop_starrating x orig_destination_distance
+prop_starrating x random_bool
+prop_starrating x click_bool
+prop_review_score x prop_brand_bool
+prop_review_score x prop_location_score1
+prop_review_score x prop_location_score2
+prop_review_score x prop_log_historical_price
+prop_review_score x position
+prop_review_score x price_usd
+prop_review_score x promotion_flag
+prop_review_score x srch_destination_id
+prop_review_score x srch_length_of_stay
+prop_review_score x srch_booking_window
+prop_review_score x srch_adults_count
+prop_review_score x srch_children_count
+prop_review_score x srch_room_count
+prop_review_score x srch_saturday_night_bool
+prop_review_score x orig_destination_distance
+prop_review_score x random_bool
+prop_review_score x click_bool
+prop_brand_bool x prop_location_score1
+prop_brand_bool x prop_location_score2
+prop_brand_bool x prop_log_historical_price
+prop_brand_bool x position
+prop_brand_bool x price_usd
+prop_brand_bool x promotion_flag
+prop_brand_bool x srch_destination_id
+prop_brand_bool x srch_length_of_stay
+prop_brand_bool x srch_booking_window
+prop_brand_bool x srch_adults_count
+prop_brand_bool x srch_children_count
+prop_brand_bool x srch_room_count
+prop_brand_bool x srch_saturday_night_bool
+prop_brand_bool x orig_destination_distance
+prop_brand_bool x random_bool
+prop_brand_bool x click_bool
+prop_location_score1 x prop_location_score2
+prop_location_score1 x prop_log_historical_price
+prop_location_score1 x position
+prop_location_score1 x price_usd
+prop_location_score1 x promotion_flag
+prop_location_score1 x srch_destination_id
+prop_location_score1 x srch_length_of_stay
+prop_location_score1 x srch_booking_window
+prop_location_score1 x srch_adults_count
+prop_location_score1 x srch_children_count
+prop_location_score1 x srch_room_count
+prop_location_score1 x srch_saturday_night_bool
+prop_location_score1 x orig_destination_distance
+prop_location_score1 x random_bool
+prop_location_score1 x click_bool
+prop_location_score2 x prop_log_historical_price
+prop_location_score2 x position
+prop_location_score2 x price_usd
+prop_location_score2 x promotion_flag
+prop_location_score2 x srch_destination_id
+prop_location_score2 x srch_length_of_stay
+prop_location_score2 x srch_booking_window
+prop_location_score2 x srch_adults_count
+prop_location_score2 x srch_children_count
+prop_location_score2 x srch_room_count
+prop_location_score2 x srch_saturday_night_bool
+prop_location_score2 x orig_destination_distance
+prop_location_score2 x random_bool
+prop_location_score2 x click_bool
+prop_log_historical_price x position
+prop_log_historical_price x price_usd
+prop_log_historical_price x promotion_flag
+prop_log_historical_price x srch_destination_id
+prop_log_historical_price x srch_length_of_stay
+prop_log_historical_price x srch_booking_window
+prop_log_historical_price x srch_adults_count
+prop_log_historical_price x srch_children_count
+prop_log_historical_price x srch_room_count
+prop_log_historical_price x srch_saturday_night_bool
+prop_log_historical_price x orig_destination_distance
+prop_log_historical_price x random_bool
+prop_log_historical_price x click_bool
+position x price_usd
+position x promotion_flag
+position x srch_destination_id
+position x srch_length_of_stay
+position x srch_booking_window
+position x srch_adults_count
+position x srch_children_count
+position x srch_room_count
+position x srch_saturday_night_bool
+position x orig_destination_distance
+position x random_bool
+position x click_bool
+price_usd x promotion_flag
+price_usd x srch_destination_id
+price_usd x srch_length_of_stay
+price_usd x srch_booking_window
+price_usd x srch_adults_count
+price_usd x srch_children_count
+price_usd x srch_room_count
+price_usd x srch_saturday_night_bool
+price_usd x orig_destination_distance
+price_usd x random_bool
+price_usd x click_bool
+promotion_flag x srch_destination_id
+promotion_flag x srch_length_of_stay
+promotion_flag x srch_booking_window
+promotion_flag x srch_adults_count
+promotion_flag x srch_children_count
+promotion_flag x srch_room_count
+promotion_flag x srch_saturday_night_bool
+promotion_flag x orig_destination_distance
+promotion_flag x random_bool
+promotion_flag x click_bool
+srch_destination_id x srch_length_of_stay
+srch_destination_id x srch_booking_window
+srch_destination_id x srch_adults_count
+srch_destination_id x srch_children_count
+srch_destination_id x srch_room_count
+srch_destination_id x srch_saturday_night_bool
+srch_destination_id x orig_destination_distance
+srch_destination_id x random_bool
+srch_destination_id x click_bool
+srch_length_of_stay x srch_booking_window
+srch_length_of_stay x srch_adults_count
+srch_length_of_stay x srch_children_count
+srch_length_of_stay x srch_room_count
+srch_length_of_stay x srch_saturday_night_bool
+srch_length_of_stay x orig_destination_distance
+srch_length_of_stay x random_bool
+srch_length_of_stay x click_bool
+srch_booking_window x srch_adults_count
+srch_booking_window x srch_children_count
+srch_booking_window x srch_room_count
+srch_booking_window x srch_saturday_night_bool
+srch_booking_window x orig_destination_distance
+srch_booking_window x random_bool
+srch_booking_window x click_bool
+srch_adults_count x srch_children_count
+srch_adults_count x srch_room_count
+srch_adults_count x srch_saturday_night_bool
+srch_adults_count x orig_destination_distance
+srch_adults_count x random_bool
+srch_adults_count x click_bool
+srch_children_count x srch_room_count
+srch_children_count x srch_saturday_night_bool
+srch_children_count x orig_destination_distance
+srch_children_count x random_bool
+srch_children_count x click_bool
+srch_room_count x srch_saturday_night_bool
+srch_room_count x orig_destination_distance
+srch_room_count x random_bool
+srch_room_count x click_bool
+srch_saturday_night_bool x orig_destination_distance
+srch_saturday_night_bool x random_bool
+srch_saturday_night_bool x click_bool
+orig_destination_distance x random_bool
+orig_destination_distance x click_bool
+random_bool x click_bool

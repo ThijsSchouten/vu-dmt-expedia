@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import pickle
 import random
+from statsmodels.regression import linear_model
+from sklearn.preprocessing import PolynomialFeatures
+from contextlib import redirect_stdout
 
 
 def read_save_datafile(fname):
@@ -44,7 +47,7 @@ def drop_columns(df):
         "comp7_inv",
         "comp8_inv",
         "gross_bookings_usd",
-        "srch_id",
+       # "srch_id",
         "prop_id",
     ]
 
@@ -101,6 +104,47 @@ def impute_negative(df):
     df2.fillna(-1, inplace=True)
 
     return df2
+
+
+def PolynomialFeatureNames(sklearn_feature_name_output, df):
+    """
+    This function takes the output from the .get_feature_names() method on the PolynomialFeatures
+    instance and replaces values with df column names to return output such as 'Col_1 x Col_2'
+
+    sklearn_feature_name_output: The list object returned when calling .get_feature_names() on the PolynomialFeatures object
+    df: Pandas dataframe with correct column names
+    """
+
+    import re
+    cols = df.columns.tolist()
+    feat_map = {'x'+str(num):cat for num, cat in enumerate(cols)}
+    feat_string = ','.join(sklearn_feature_name_output)
+    for k,v in feat_map.items():
+        feat_string = re.sub(fr"\b{k}\b",v,feat_string)
+    return feat_string.replace(" "," x ").split(',')
+
+def myprint(s):
+    with open('output/modelsummary.txt','w+') as f:
+        print(s, file=f)
+
+def interaction_effects(data):
+    # remove date variable
+    data = data.iloc[:,1:]
+    # choose dependent variable
+    X = data.drop('booking_bool', axis=1)
+    y = data['booking_bool']
+    # Generate interaction terms
+    poly = PolynomialFeatures(interaction_only=True,include_bias = False)
+    X_interaction = poly.fit_transform(X)
+    # Get names of these terms
+    names = PolynomialFeatureNames(poly.get_feature_names(),X)
+    # Fit model to check importance of features
+    model = linear_model.OLS(y, X_interaction).fit()
+    with open('output/modelsummary.txt', 'w') as f:
+        with redirect_stdout(f):
+            print(model.summary())
+            print(*names, sep = '\n')
+    print(model.summary())
 
 
 fname = "./data/training_set_VU_DM.csv"

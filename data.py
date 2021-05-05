@@ -8,7 +8,7 @@ from contextlib import redirect_stdout
 
 
 def read_save_datafile(fname):
-    df = pd.read_csv(fname, index_col=0, nrows=10008)
+    df = pd.read_csv(fname, index_col=0)
     return df
 
 

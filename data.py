@@ -47,7 +47,7 @@ def drop_columns(df):
         "comp7_inv",
         "comp8_inv",
         "gross_bookings_usd",
-       # "srch_id",
+        # "srch_id",
         "prop_id",
     ]
 
@@ -116,34 +116,37 @@ def PolynomialFeatureNames(sklearn_feature_name_output, df):
     """
 
     import re
+
     cols = df.columns.tolist()
-    feat_map = {'x'+str(num):cat for num, cat in enumerate(cols)}
-    feat_string = ','.join(sklearn_feature_name_output)
-    for k,v in feat_map.items():
-        feat_string = re.sub(fr"\b{k}\b",v,feat_string)
-    return feat_string.replace(" "," x ").split(',')
+    feat_map = {"x" + str(num): cat for num, cat in enumerate(cols)}
+    feat_string = ",".join(sklearn_feature_name_output)
+    for k, v in feat_map.items():
+        feat_string = re.sub(fr"\b{k}\b", v, feat_string)
+    return feat_string.replace(" ", " x ").split(",")
+
 
 def myprint(s):
-    with open('output/modelsummary.txt','w+') as f:
+    with open("output/modelsummary.txt", "w+") as f:
         print(s, file=f)
+
 
 def interaction_effects(data):
     # remove date variable
-    data = data.iloc[:,1:]
+    data = data.iloc[:, 1:].copy()
     # choose dependent variable
-    X = data.drop('booking_bool', axis=1)
-    y = data['booking_bool']
+    X = data.drop("booking_bool", axis=1)
+    y = data["booking_bool"]
     # Generate interaction terms
-    poly = PolynomialFeatures(interaction_only=True,include_bias = False)
+    poly = PolynomialFeatures(interaction_only=True, include_bias=False)
     X_interaction = poly.fit_transform(X)
     # Get names of these terms
-    names = PolynomialFeatureNames(poly.get_feature_names(),X)
+    names = PolynomialFeatureNames(poly.get_feature_names(), X)
     # Fit model to check importance of features
     model = linear_model.OLS(y, X_interaction).fit()
-    with open('output/modelsummary.txt', 'w') as f:
+    with open("output/modelsummary.txt", "w") as f:
         with redirect_stdout(f):
             print(model.summary())
-            print(*names, sep = '\n')
+            print(*names, sep="\n")
     print(model.summary())
 
 

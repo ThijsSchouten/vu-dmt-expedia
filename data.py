@@ -152,8 +152,6 @@ def interaction_effects(data,dep_variable, threshold):
         f.write(model.summary().as_csv())
     # show significant results
     results = pd.read_csv("output/modelsummary.csv", skiprows= 10, skipfooter= 10, index_col= 0)
-    print(names)
-    print(results.index)
     results.index = names
     sign_results = results[results["P>|t| "] < threshold]
     print(sign_results.sort_values(by = '   coef   ', ascending = False))

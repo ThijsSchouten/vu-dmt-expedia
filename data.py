@@ -6,7 +6,6 @@ from statsmodels.regression import linear_model
 from sklearn.preprocessing import PolynomialFeatures
 from contextlib import redirect_stdout
 
-
 def read_save_datafile(fname):
     df = pd.read_csv(fname, index_col=0)
     return df
@@ -130,12 +129,17 @@ def myprint(s):
         print(s, file=f)
 
 
-def interaction_effects(data):
-    # remove date variable
+def interaction_effects(data,dep_variable, threshold):
+    # remove date variable and booking/click depending on dep_variable
     data = data.iloc[:, 1:].copy()
+    if dep_variable == "click_bool":
+        data = data.drop("booking_bool", axis=1)
+    elif dep_variable == "booking_bool":
+        data = data.drop("click_bool", axis=1)
+
     # choose dependent variable
-    X = data.drop("booking_bool", axis=1)
-    y = data["booking_bool"]
+    X = data.drop(dep_variable, axis=1)
+    y = data[dep_variable]
     # Generate interaction terms
     poly = PolynomialFeatures(interaction_only=True, include_bias=False)
     X_interaction = poly.fit_transform(X)
@@ -143,12 +147,16 @@ def interaction_effects(data):
     names = PolynomialFeatureNames(poly.get_feature_names(), X)
     # Fit model to check importance of features
     model = linear_model.OLS(y, X_interaction).fit()
-    with open("output/modelsummary.txt", "w") as f:
-        with redirect_stdout(f):
-            print(model.summary())
-            print(*names, sep="\n")
-    print(model.summary())
-
+    # save results
+    with open("output/modelsummary.csv", "w") as f:
+        f.write(model.summary().as_csv())
+    # show significant results
+    results = pd.read_csv("output/modelsummary.csv", skiprows= 10, skipfooter= 10, index_col= 0)
+    print(names)
+    print(results.index)
+    results.index = names
+    sign_results = results[results["P>|t| "] < threshold]
+    print(sign_results.sort_values(by = '   coef   ', ascending = False))
 
 fname = "./data/training_set_VU_DM.csv"
 # data = read_save_datafile(fname)

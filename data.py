@@ -4,6 +4,9 @@ import pickle
 import random
 from sklearn import preprocessing
 import datetime
+from statsmodels.regression import linear_model
+from sklearn.preprocessing import PolynomialFeatures
+from contextlib import redirect_stdout
 
 
 def read_datafile(fname):
@@ -12,7 +15,6 @@ def read_datafile(fname):
         df["date_time"], format="%Y-%m-%d %H:%M:%S"
     )
     df["date_time"] = df["date_time"].apply(lambda x: x.date())
-    return df
 
 
 def drop_columns(df):
@@ -158,6 +160,60 @@ def normalise_price(df):
             df2.loc[df2[ref_col] == unique_val, new_col] = scaled_x
 
     return df2
+
+
+def PolynomialFeatureNames(sklearn_feature_name_output, df):
+    """
+    This function takes the output from the .get_feature_names() method on the PolynomialFeatures
+    instance and replaces values with df column names to return output such as 'Col_1 x Col_2'
+
+    sklearn_feature_name_output: The list object returned when calling .get_feature_names() on the PolynomialFeatures object
+    df: Pandas dataframe with correct column names
+    """
+
+    import re
+
+    cols = df.columns.tolist()
+    feat_map = {"x" + str(num): cat for num, cat in enumerate(cols)}
+    feat_string = ",".join(sklearn_feature_name_output)
+    for k, v in feat_map.items():
+        feat_string = re.sub(fr"\b{k}\b", v, feat_string)
+    return feat_string.replace(" ", " x ").split(",")
+
+
+def myprint(s):
+    with open("output/modelsummary.txt", "w+") as f:
+        print(s, file=f)
+
+
+def interaction_effects(data, dep_variable, threshold):
+    # remove date variable and booking/click depending on dep_variable
+    data = data.iloc[:, 1:].copy()
+    if dep_variable == "click_bool":
+        data = data.drop("booking_bool", axis=1)
+    elif dep_variable == "booking_bool":
+        data = data.drop("click_bool", axis=1)
+
+    # choose dependent variable
+    X = data.drop(dep_variable, axis=1)
+    y = data[dep_variable]
+    # Generate interaction terms
+    poly = PolynomialFeatures(interaction_only=True, include_bias=False)
+    X_interaction = poly.fit_transform(X)
+    # Get names of these terms
+    names = PolynomialFeatureNames(poly.get_feature_names(), X)
+    # Fit model to check importance of features
+    model = linear_model.OLS(y, X_interaction).fit()
+    # save results
+    with open("output/modelsummary.csv", "w") as f:
+        f.write(model.summary().as_csv())
+    # show significant results
+    results = pd.read_csv(
+        "output/modelsummary.csv", skiprows=10, skipfooter=10, index_col=0
+    )
+    results.index = names
+    sign_results = results[results["P>|t| "] < threshold]
+    print(sign_results.sort_values(by="   coef   ", ascending=False))
 
 
 fname = "./data/training_set_VU_DM.csv"

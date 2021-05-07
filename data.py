@@ -2,10 +2,16 @@ import pandas as pd
 import numpy as np
 import pickle
 import random
+from sklearn import preprocessing
+import datetime
 
 
-def read_save_datafile(fname):
-    df = pd.read_csv(fname, index_col=0, nrows=10008)
+def read_datafile(fname):
+    df = pd.read_csv(fname, nrows=10008)
+    df["date_time"] = pd.to_datetime(
+        df["date_time"], format="%Y-%m-%d %H:%M:%S"
+    )
+    df["date_time"] = df["date_time"].apply(lambda x: x.date())
     return df
 
 
@@ -44,7 +50,7 @@ def drop_columns(df):
         "comp7_inv",
         "comp8_inv",
         "gross_bookings_usd",
-        "srch_id",
+        # "srch_id",
         "prop_id",
     ]
 
@@ -60,7 +66,7 @@ def randomise_missing_values(df, columns_to_fill):
         data = df2[columns_to_fill]
         mask = data.isnull()
         samples = random.choices(data[~mask].values, k=mask.sum())
-        data[mask] = samples
+        df2[columns_to_fill][mask] = samples
 
     return df2
 
@@ -103,5 +109,58 @@ def impute_negative(df):
     return df2
 
 
+def balance_click_classes(df):
+    click_indices = df[df.click_bool == 1].index
+    random_indices = np.random.choice(
+        click_indices, len(df.loc[df.click_bool == 1]), replace=False
+    )
+    click_sample = df.loc[random_indices]
+
+    not_click = df[df.click_bool == 0].index
+    random_indices = np.random.choice(
+        not_click, sum(df["click_bool"]), replace=False
+    )
+    not_click_sample = df.loc[random_indices]
+
+    df_new = pd.concat([not_click_sample, click_sample], axis=0)
+
+    return df_new
+
+
+def normalise_price(df):
+    df2 = df.copy()
+
+    # All the columns with respect to which we want to normalise
+    ref_cols = [
+        "srch_id",
+        "srch_destination_id",
+        "srch_booking_window",
+        "prop_country_id",
+        "date_time",
+        "prop_id",
+    ]
+    # Initialise scaler
+
+    scaler = preprocessing.MinMaxScaler()
+
+    # Loop over all columns to reference to
+    for ref_col in ref_cols:
+        # Create new normalised column
+        new_col = "price_" + ref_col
+        df2[new_col] = np.nan
+
+        # Loop over all unique values in reference column,
+        # normalise the price, and add this to the new
+        # normalised column
+        for unique_val in df2[ref_col].unique():
+            x = df2.loc[df2[ref_col] == unique_val, "price_usd"]
+            scaled_x = scaler.fit_transform(x.values.reshape(-1, 1))
+            df2.loc[df2[ref_col] == unique_val, new_col] = scaled_x
+
+    return df2
+
+
 fname = "./data/training_set_VU_DM.csv"
-# data = read_save_datafile(fname)
+data = read_datafile(fname)
+# data1 = drop_and_impute(data)
+# data2 = impute_negative(data)

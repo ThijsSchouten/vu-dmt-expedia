@@ -15,6 +15,7 @@ def read_datafile(fname):
         df["date_time"], format="%Y-%m-%d %H:%M:%S"
     )
     df["date_time"] = df["date_time"].apply(lambda x: x.date())
+    return df
 
 
 def drop_columns(df):
@@ -129,7 +130,7 @@ def balance_click_classes(df):
     return df_new
 
 
-def normalise_price(df):
+def normalise_price(df, average=False):
     df2 = df.copy()
 
     # All the columns with respect to which we want to normalise
@@ -158,6 +159,11 @@ def normalise_price(df):
             x = df2.loc[df2[ref_col] == unique_val, "price_usd"]
             scaled_x = scaler.fit_transform(x.values.reshape(-1, 1))
             df2.loc[df2[ref_col] == unique_val, new_col] = scaled_x
+
+    if average:
+        df2["price_usd"] = df2[ref_cols].mean(axis=1)
+    else:
+        df2.drop(["price_usd"], axis=1, inplace=True)
 
     return df2
 

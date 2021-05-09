@@ -72,7 +72,7 @@ def randomise_missing_values(df, columns_to_fill):
         data = df2[columns_to_fill]
         mask = data.isnull()
         samples = random.choices(data[~mask].values, k=mask.sum())
-        df2[columns_to_fill][mask] = samples
+        df2.loc[mask, columns_to_fill] = samples
 
     return df2
 

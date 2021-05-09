@@ -1,9 +1,12 @@
 import pickle
 from data import *
+import random
+import numpy
 
 
 def main():
-
+    random.seed(42)
+    np.random.seed(42)
     data = read_datafile("./data/training_set_VU_DM.csv", all_data=False)
     data = normalise_price(data)
     data = drop_and_impute(data)

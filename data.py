@@ -9,8 +9,11 @@ from sklearn.preprocessing import PolynomialFeatures
 from contextlib import redirect_stdout
 
 
-def read_datafile(fname):
-    df = pd.read_csv(fname, nrows=10008)
+def read_datafile(fname, all_data=False, nrows=10008):
+    if all_data:
+        df = pd.read_csv(fname)
+    else:
+        df = pd.read_csv(fname, nrows=nrows)
     df["date_time"] = pd.to_datetime(
         df["date_time"], format="%Y-%m-%d %H:%M:%S"
     )
@@ -53,7 +56,7 @@ def drop_columns(df):
         "comp7_inv",
         "comp8_inv",
         "gross_bookings_usd",
-        # "srch_id",
+        "srch_id",
         "prop_id",
     ]
 

@@ -14,7 +14,9 @@ def read_datafile(fname, all_data=False, nrows=10008):
         df = pd.read_csv(fname)
     else:
         df = pd.read_csv(fname, nrows=nrows)
-    df["date_time"] = pd.to_datetime(df["date_time"], format="%Y-%m-%d %H:%M:%S")
+    df["date_time"] = pd.to_datetime(
+        df["date_time"], format="%Y-%m-%d %H:%M:%S"
+    )
     df["date_time"] = df["date_time"].apply(lambda x: x.date())
     return df
 
@@ -121,7 +123,9 @@ def balance_click_classes(df):
     click_sample = df.loc[random_indices]
 
     not_click = df[df.click_bool == 0].index
-    random_indices = np.random.choice(not_click, sum(df["click_bool"]), replace=False)
+    random_indices = np.random.choice(
+        not_click, sum(df["click_bool"]), replace=False
+    )
     not_click_sample = df.loc[random_indices]
 
     df_new = pd.concat([not_click_sample, click_sample], axis=0)
@@ -169,21 +173,48 @@ def normalise_column(df, feature, average=False):
 
 def add_pricediff_feature(df, inplace=False):
     df2 = df.copy()
-    #
-    df2["price_diff_from_recent"] = np.abs(
-        df2["price_usd"].to_numpy()
-        - df2["prop_log_historical_price"].to_numpy().exp()
+    # Create new feature by taking the difference between the price and the recent price.
+    df2["price_diff_from_recent"] = df2["price_usd"].to_numpy() - np.exp(
+        df2["prop_log_historical_price"].to_numpy()
     )
+
     # Set values of the new feature to -1 if the mean recent price is missing.
-    df2.loc[.
+    df2.loc[
         df2["prop_log_historical_price"] == 0, "price_diff_from_recent"
-    ] = -1
+    ] = 0
 
     if inplace:
         df = df2
     else:
         return df2
 
+def add_combination_feature(df, f1, f2, inplace=False, comp=False):
+    """
+    Adds a new column which is a combination of two features.
+
+    If comp=True, then a composite feature (f_new = f1 * max(f2) + f2)
+    will be added.
+    """
+    df2 = df.copy()
+    # Create new name for column
+    if comp:
+        f_name = "comp:" f1 + ":" + f2
+    else:
+        f_name = f1 + ":" + f2
+
+    # Compute new feature values
+    if comp:
+        f_new = df[f1].to_numpy() * df[f2].max() + df.to_numpy()
+    else:
+        f_new = f1.to_numpy() * f2.to_numpy()
+
+    # Add to dataframe
+    df2[f_name] = f_new
+
+    if inplace:
+        df = df2
+    else:
+        return df2
 
 def PolynomialFeatureNames(sklearn_feature_name_output, df):
     """

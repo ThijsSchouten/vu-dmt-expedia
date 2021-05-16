@@ -133,7 +133,7 @@ def balance_click_classes(df):
     return df_new
 
 
-def normalise_price(df, feature, average=False):
+def normalise_column(df, feature, average=False):
     df2 = df.copy()
 
     # All the columns with respect to which we want to normalise
@@ -169,6 +169,24 @@ def normalise_price(df, feature, average=False):
         df2.drop([feature], axis=1, inplace=True)
 
     return df2
+
+
+def add_pricediff_feature(df, inplace=False):
+    df2 = df.copy()
+    #
+    df2["price_diff_from_recent"] = np.abs(
+        df2["price_usd"].to_numpy()
+        - df2["prop_log_historical_price"].to_numpy().exp()
+    )
+    # Set values of the new feature to -1 if the mean recent price is missing.
+    df2.loc[.
+        df2["prop_log_historical_price"] == 0, "price_diff_from_recent"
+    ] = -1
+
+    if inplace:
+        df = df2
+    else:
+        return df2
 
 
 def PolynomialFeatureNames(sklearn_feature_name_output, df):

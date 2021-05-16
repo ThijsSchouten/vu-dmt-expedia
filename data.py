@@ -133,7 +133,7 @@ def balance_click_classes(df):
     return df_new
 
 
-def normalise_price(df, average=False):
+def normalise_price(df, feature, average=False):
     df2 = df.copy()
 
     # All the columns with respect to which we want to normalise
@@ -152,21 +152,21 @@ def normalise_price(df, average=False):
     # Loop over all columns to reference to
     for ref_col in ref_cols:
         # Create new normalised column
-        new_col = "price_" + ref_col
+        new_col = feature + "_" + ref_col
         df2[new_col] = np.nan
 
         # Loop over all unique values in reference column,
         # normalise the price, and add this to the new
         # normalised column
         for unique_val in df2[ref_col].unique():
-            x = df2.loc[df2[ref_col] == unique_val, "price_usd"]
+            x = df2.loc[df2[ref_col] == unique_val, feature]
             scaled_x = scaler.fit_transform(x.values.reshape(-1, 1))
             df2.loc[df2[ref_col] == unique_val, new_col] = scaled_x
 
     if average:
-        df2["price_usd"] = df2[ref_cols].mean(axis=1)
+        df2[feature] = df2[ref_cols].mean(axis=1)
     else:
-        df2.drop(["price_usd"], axis=1, inplace=True)
+        df2.drop([feature], axis=1, inplace=True)
 
     return df2
 

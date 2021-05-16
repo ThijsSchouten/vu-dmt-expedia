@@ -2,7 +2,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
-from sklearn import preprocessing
 
 
 def describe(df, save=False):
@@ -67,25 +66,3 @@ def plot_boxplot(_df, path, drop=[], dpi=300):
 
     ax = df.boxplot(figsize=(15, 6), rot=90)
     ax.figure.savefig(path, dpi=dpi, bbox_inches="tight")
-
-
-# %%
-if __name__ == "__main__":
-    training_set = pd.read_csv("data/training_set_VU_DM.csv")
-    training_set["date_time"] = pd.to_datetime(training_set["date_time"])
-
-    # %%
-    describe(training_set, "output/descriptive_df.pickle")
-
-    # %%
-    plot_histograms(training_set, path="output/histograms/")
-    # %%
-    plot_missing_values(training_set, path="output/plot_missing_values.png")
-    # %%
-    plot_boxplot(
-        training_set,
-        path="output/boxplot.png",
-        drop=["prop_id", "srch_destination_id", "orig_destination_distance"],
-    )
-
-# %%

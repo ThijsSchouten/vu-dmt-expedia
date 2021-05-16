@@ -14,9 +14,7 @@ def read_datafile(fname, all_data=False, nrows=10008):
         df = pd.read_csv(fname)
     else:
         df = pd.read_csv(fname, nrows=nrows)
-    df["date_time"] = pd.to_datetime(
-        df["date_time"], format="%Y-%m-%d %H:%M:%S"
-    )
+    df["date_time"] = pd.to_datetime(df["date_time"], format="%Y-%m-%d %H:%M:%S")
     df["date_time"] = df["date_time"].apply(lambda x: x.date())
     return df
 
@@ -123,9 +121,7 @@ def balance_click_classes(df):
     click_sample = df.loc[random_indices]
 
     not_click = df[df.click_bool == 0].index
-    random_indices = np.random.choice(
-        not_click, sum(df["click_bool"]), replace=False
-    )
+    random_indices = np.random.choice(not_click, sum(df["click_bool"]), replace=False)
     not_click_sample = df.loc[random_indices]
 
     df_new = pd.concat([not_click_sample, click_sample], axis=0)
@@ -191,7 +187,7 @@ def PolynomialFeatureNames(sklearn_feature_name_output, df):
 
 
 def myprint(s):
-    with open("output/modelsummary.txt", "w+") as f:
+    with open("output/interaction_effects/modelsummary.txt", "w+") as f:
         print(s, file=f)
 
 
@@ -214,11 +210,14 @@ def interaction_effects(data, dep_variable, threshold):
     # Fit model to check importance of features
     model = linear_model.OLS(y, X_interaction).fit()
     # save results
-    with open("output/modelsummary.csv", "w") as f:
+    with open("output/interaction_effects/modelsummary.csv", "w") as f:
         f.write(model.summary().as_csv())
     # show significant results
     results = pd.read_csv(
-        "output/modelsummary.csv", skiprows=10, skipfooter=10, index_col=0
+        "output/interaction_effects/modelsummary.csv",
+        skiprows=10,
+        skipfooter=10,
+        index_col=0,
     )
     results.index = names
     sign_results = results[results["P>|t| "] < threshold]

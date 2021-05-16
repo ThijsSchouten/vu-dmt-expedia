@@ -1,5 +1,5 @@
 import pickle
-from data import *
+from lib_data import *
 import random
 import numpy
 

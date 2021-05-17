@@ -9,7 +9,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from contextlib import redirect_stdout
 
 
-def read_datafile(fname, all_data=False, nrows=10008):
+def read_datafile(fname, all_data=False, nrows=10):
     if all_data:
         df = pd.read_csv(fname)
     else:
@@ -21,13 +21,13 @@ def read_datafile(fname, all_data=False, nrows=10008):
     return df
 
 
-def drop_columns(df):
+def drop_columns(df, cohort="train"):
     # Copy dataframe
     df2 = df.copy()
 
     # Columns that have more than 30 percent missing data:
     cols_to_drop = [
-        "date_time",
+        # "date_time",
         "visitor_hist_starrating",
         "visitor_hist_adr_usd",
         "srch_query_affinity_score",
@@ -55,10 +55,13 @@ def drop_columns(df):
         "comp6_inv",
         "comp7_inv",
         "comp8_inv",
-        "gross_bookings_usd",
-        "srch_id",
-        "prop_id",
+        # "gross_bookings_usd",
+        # "srch_id",
+        # "prop_id",
     ]
+
+    if cohort == "train":
+        cols_to_drop.append("gross_booking_usd")
 
     # Drop said columns and return new dataframe
     df2.drop(cols_to_drop, axis=1, inplace=True)
@@ -77,7 +80,7 @@ def randomise_missing_values(df, columns_to_fill):
     return df2
 
 
-def drop_and_impute(df):
+def drop_and_impute(df, cohort="train"):
     """
     Drops all columns with more than 30 percent of the data missing,
     and imputes the rest of the missing values.
@@ -85,7 +88,7 @@ def drop_and_impute(df):
     df2 = df.copy()
 
     # Drop columns with more than 30 percent missing
-    df2 = drop_columns(df2)
+    df2 = drop_columns(df2, cohort=cohort)
 
     # Randomise the prop_review_score column
     df2 = randomise_missing_values(df2, "prop_review_score")

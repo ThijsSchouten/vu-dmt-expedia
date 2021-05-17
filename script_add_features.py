@@ -1,0 +1,31 @@
+# Load data
+import pandas as pd
+from lib_data import *
+
+def create_checkin_checkout(data):
+      # Takes dataset in .pickle format and adds a check in and check out variable
+      # Original dataset is the csv (there the date isn't removed yet
+      data["date_time"] = pd.to_datetime(
+              data["date_time"], format="%Y-%m-%d %H:%M:%S"
+          )
+      data["check_in"] = data["date_time"].dt.dayofyear
+      data["check_in"] = data["check_in"] + data["srch_booking_window"]
+      data["check_out"] = data["check_in"] + data["srch_length_of_stay"]
+      return data
+
+
+def create_price_ranks(data):
+      # Takes dataset and adds the price_ranks
+      # maybe TODO is add orginial price variable
+      data["price_srch_id_rank"] = data.groupby(by = "srch_id")['price_srch_id'].rank(method = "dense", ascending = False)
+      data["price_srch_destination_id_rank"] = data.groupby(by = "srch_id")['price_srch_destination_id'].rank(method = "dense", ascending = False)
+      data["price_srch_booking_window_rank"] = data.groupby(by = "srch_id")['price_srch_booking_window'].rank(method = "dense", ascending = False)
+      data["price_prop_country_id_rank"] = data.groupby(by = "srch_id")['price_prop_country_id'].rank(method = "dense", ascending = False)
+      data["price_date_time_rank"] = data.groupby(by = "srch_id")['price_date_time'].rank(method = "dense", ascending = False)
+      data["price_prop_id_rank"] = data.groupby(by = "srch_id")['price_prop_id'].rank(method = "dense", ascending = False)
+      return data
+
+
+data2 = read_datafile("data/training_set_VU_DM.csv", all_data=False)
+data2 = create_checkin_checkout(data2)
+print(data2)

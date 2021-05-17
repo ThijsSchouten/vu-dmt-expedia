@@ -3,8 +3,7 @@ import pandas as pd
 from lib_data import *
 
 def create_checkin_checkout(data):
-      # Takes dataset in .pickle format and adds a check in and check out variable
-      # Original dataset is the csv (there the date isn't removed yet
+      # Takes dataset and adds a check in and check out variable
       data["date_time"] = pd.to_datetime(
               data["date_time"], format="%Y-%m-%d %H:%M:%S"
           )

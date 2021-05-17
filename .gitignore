@@ -7,4 +7,7 @@ __pycache__
 
 data/*.csv
 data/*.pickle
+data/split/*.pickle
 output/EDA_histograms/*.png
+output/results/*.p*
+output/results/*.csv

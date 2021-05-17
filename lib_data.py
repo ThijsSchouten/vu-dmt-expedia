@@ -61,7 +61,7 @@ def drop_columns(df, cohort="train"):
     ]
 
     if cohort == "train":
-        cols_to_drop.append("gross_booking_usd")
+        cols_to_drop.append("gross_bookings_usd")
 
     # Drop said columns and return new dataframe
     df2.drop(cols_to_drop, axis=1, inplace=True)

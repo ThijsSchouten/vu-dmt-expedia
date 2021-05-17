@@ -188,6 +188,7 @@ def add_pricediff_feature(df, inplace=False):
     else:
         return df2
 
+
 def add_combination_feature(df, f1, f2, inplace=False, comp=False):
     """
     Adds a new column which is a combination of two features.
@@ -198,15 +199,15 @@ def add_combination_feature(df, f1, f2, inplace=False, comp=False):
     df2 = df.copy()
     # Create new name for column
     if comp:
-        f_name = "comp:" f1 + ":" + f2
+        f_name = "comp:" + f1 + ":" + f2
     else:
         f_name = f1 + ":" + f2
 
     # Compute new feature values
     if comp:
-        f_new = df[f1].to_numpy() * df[f2].max() + df.to_numpy()
+        f_new = df[f1].to_numpy() * df[f2].max() + df[f2].to_numpy()
     else:
-        f_new = f1.to_numpy() * f2.to_numpy()
+        f_new = df[f1].to_numpy() * df[f2].to_numpy()
 
     # Add to dataframe
     df2[f_name] = f_new
@@ -215,6 +216,7 @@ def add_combination_feature(df, f1, f2, inplace=False, comp=False):
         df = df2
     else:
         return df2
+
 
 def PolynomialFeatureNames(sklearn_feature_name_output, df):
     """

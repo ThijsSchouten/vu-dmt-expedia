@@ -14,8 +14,7 @@ def create_pickle(source, target, cohort, imputation="standard"):
 
     print("Starting normalisation")
     # Normalisation
-    if imputation == "negative":
-        data = normalise_column(data, "price_usd")
+    data = normalise_column(data, "price_usd")
     data = normalise_column(data, "prop_location_score1")
     data = normalise_column(data, "prop_location_score2")
     data = normalise_column(data, "price_diff_from_recent")
@@ -75,9 +74,21 @@ def main():
         cohort="test",
         imputation="negative",
     )
+    create_pickle(
+        "./data/training_set_VU_DM.csv",
+        "./data/normalised_unbalanced_training-data.pickle",
+        cohort="train",
+        imputation="standard",
+    )
+    create_pickle(
+        "./data/test_set_VU_DM.csv",
+        "./data/normalised_test-data.pickle",
+        cohort="test",
+        imputation="standard",
+    )
 
-    normalise_remainder("./data/normalised_unbalanced_training-data.pickle")
-    normalise_remainder("./data/normalised_test-data.pickle")
+    # normalise_remainder("./data/normalised_unbalanced_training-data.pickle")
+    # normalise_remainder("./data/normalised_test-data.pickle")
 
 
 if __name__ == "__main__":

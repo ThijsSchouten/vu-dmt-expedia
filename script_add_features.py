@@ -25,7 +25,3 @@ def create_price_ranks(data):
       data["price_prop_id_rank"] = data.groupby(by = "srch_id")['price_prop_id'].rank(method = "dense", ascending = False)
       return data
 
-
-data2 = read_datafile("data/training_set_VU_DM.csv", all_data=False)
-data2 = create_checkin_checkout(data2)
-print(data2)

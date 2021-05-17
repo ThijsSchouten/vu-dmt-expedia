@@ -135,6 +135,8 @@ def balance_click_classes(df):
 
 def normalise_column(df, feature, average=False):
     df2 = df.copy()
+    date_time_backup = df2["date_time"].copy()
+    df2["date_time"] = df2["date_time"].apply(lambda x: (x.year, x.month))
 
     # All the columns with respect to which we want to normalise
     ref_cols = [
@@ -163,10 +165,11 @@ def normalise_column(df, feature, average=False):
             scaled_x = scaler.fit_transform(x.values.reshape(-1, 1))
             df2.loc[df2[ref_col] == unique_val, new_col] = scaled_x
 
-    if average:
-        df2[feature] = df2[ref_cols].mean(axis=1)
-    else:
-        df2.drop([feature], axis=1, inplace=True)
+    # if average:
+    # df2[feature] = df2[ref_cols].mean(axis=1)
+
+    # Fill in the original date and time again.
+    df2["date_time"] = date_time_backup
 
     return df2
 
@@ -216,6 +219,26 @@ def add_combination_feature(df, f1, f2, inplace=False, comp=False):
         df = df2
     else:
         return df2
+
+
+def add_some_features(df):
+    # Add features
+    # add_pricediff_feature(data, inplace=True)
+    df2 = df.copy()
+
+    # Define features to create combinatorial collumns from
+    comb_feats = [
+        ["orig_destination_distance", "promotion_flag"],
+        ["srch_length_of_stay", "promotion_flag"],
+        ["prop_location_score2", "promotion_flag"],
+        ["prop_location_score1", "prop_location_score2"],
+    ]
+    # Loop over pairs and create columns
+    for f1, f2 in comb_feats:
+        print(f1, f2)
+        df2 = add_combination_feature(df2, f1, f2)
+
+    return df2
 
 
 def PolynomialFeatureNames(sklearn_feature_name_output, df):
@@ -279,3 +302,6 @@ fname = "./data/training_set_VU_DM.csv"
 data = read_datafile(fname)
 # data1 = drop_and_impute(data)
 # data2 = impute_negative(data)
+
+# with open("./data/normalised_test-data.pickle", "rb") as f:
+#     data = pickle.load(f)

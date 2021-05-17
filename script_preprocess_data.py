@@ -4,7 +4,7 @@ import random
 import numpy
 
 
-def create_pickle(source, target1, target2, cohort):
+def create_pickle(source, target, cohort, imputation="standard"):
     data = read_datafile(source, all_data=False)
     print("CSV loaded in")
 
@@ -32,19 +32,18 @@ def create_pickle(source, target1, target2, cohort):
         add_combination_feature(data, f1, f2, inplace=True)
 
     print("Imputing missing values")
-    # Missing values and class balancing
-    data1 = drop_and_impute(data, cohort=cohort)
-    # data = balance_click_classes(data)
 
-    data2 = impute_negative(data)
+    # Missing values and class balancing
+    if imputation == "standard":
+        data = drop_and_impute(data, cohort=cohort)
+
+    if imputation == "negative":
+        data = impute_negative(data)
 
     print("Saving files")
     # Save files
-    with open(target1, "wb") as f:
-        pickle.dump(data1, f)
-
-    with open(target2, "wb") as f:
-        pickle.dump(data2, f)
+    with open(target, "wb") as f:
+        pickle.dump(data, f)
 
 
 def main():
@@ -54,15 +53,15 @@ def main():
     # Create pickles
     create_pickle(
         "./data/training_set_VU_DM.csv",
-        "./data/normalised_unbalanced_training-data.pickle",
         "./data/normalised_unbalanced_training-data_2.pickle",
         cohort="train",
+        imputation="negative
     )
     create_pickle(
         "./data/test_set_VU_DM.csv",
-        "./data/normalised_test-data.pickle",
         "./data/normalised_test-data_2.pickle",
         cohort="test",
+        imputation="negative",
     )
 
 

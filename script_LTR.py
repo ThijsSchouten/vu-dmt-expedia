@@ -44,14 +44,16 @@ params = dict(
     subsample=[0.9],
 )
 
-ranker.gridsearch(params, out_path=f"output/results/{ID}_gridsearch.pickle")
+ranker.gridsearch(params, out_path=f"output/results/{ID}_gridsearch.p")
+
+# ranker.load_results("output/gridsearch_0X_TEST.pickle")
+
+#%%
+ranker.get_best_params()
 gridsearch_results = ranker.gridsearch_results
 
-# %%
-# ranker.load_results("output/gridsearch_0X_TEST.pickle")
-ranker.get_best_params()
 ranker.train_best_model(f"output/results/{ID}_kaggle_pred.csv")
-ranker.best_model.save_model(f"output/results/{ID}_best_model.model")
+ranker.best_model.save_model(f"output/results/{ID}_best_model.p")
 
 #%% Write files to pickle for later analysis
 fi = ranker.best_model.feature_importances_

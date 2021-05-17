@@ -9,7 +9,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from contextlib import redirect_stdout
 
 
-def read_datafile(fname, all_data=False, nrows=10):
+def read_datafile(fname, all_data=False, nrows=1000):
     if all_data:
         df = pd.read_csv(fname)
     else:
@@ -301,10 +301,10 @@ def interaction_effects(data, dep_variable, threshold):
     print(sign_results.sort_values(by="   coef   ", ascending=False))
 
 
-fname = "./data/training_set_VU_DM.csv"
-data = read_datafile(fname)
+# fname = "./data/training_set_VU_DM.csv"
+# data = read_datafile(fname)
 # data1 = drop_and_impute(data)
 # data2 = impute_negative(data)
 
-# with open("./data/normalised_test-data.pickle", "rb") as f:
-#     data = pickle.load(f)
+with open("./data/normalised_test-data.pickle", "rb") as f:
+    data = pickle.load(f)

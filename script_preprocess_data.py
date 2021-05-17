@@ -1,5 +1,6 @@
 import pickle
 from lib_data import *
+from script_add_features import *
 import random
 import numpy
 
@@ -19,7 +20,7 @@ def create_pickle(source, target, cohort, imputation="standard"):
     data = normalise_column(data, "prop_location_score2")
     data = normalise_column(data, "price_diff_from_recent")
 
-    print("Adding combinatorial features")
+    print("Adding combinatorial and other features")
     # Define features to create combinatorial collumns from
     comb_feats = [
         ["orig_destination_distance", "promotion_flag"],
@@ -27,9 +28,13 @@ def create_pickle(source, target, cohort, imputation="standard"):
         ["prop_location_score2", "promotion_flag"],
         ["prop_location_score1", "prop_location_score2"],
     ]
+
     # Loop over pairs and create columns
     for f1, f2 in comb_feats:
         add_combination_feature(data, f1, f2, inplace=True)
+
+    data = create_checkin_checkout(data)
+    data = create_price_ranks(data)
 
     print("Imputing missing values")
 

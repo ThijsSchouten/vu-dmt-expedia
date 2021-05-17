@@ -25,7 +25,7 @@ def drop_columns(df, cohort="train"):
     # Copy dataframe
     df2 = df.copy()
 
-    # Columns that have more than 30 percent missing data:
+    # Columns that have more than 30 percent missing data:dat is dus voor de andere
     cols_to_drop = [
         # "date_time",
         "visitor_hist_starrating",

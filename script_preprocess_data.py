@@ -77,7 +77,7 @@ def main():
     )
 
     normalise_remainder("./data/normalised_unbalanced_training-data.pickle")
-    normalise_remainder("./data/normalised_training-data.pickle")
+    normalise_remainder("./data/normalised_test-data.pickle")
 
 
 if __name__ == "__main__":

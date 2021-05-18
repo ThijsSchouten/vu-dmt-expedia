@@ -15,22 +15,22 @@ def create_checkin_checkout(data):
 def create_price_ranks(data):
     # Takes dataset and adds the price_ranks
     # maybe TODO is add orginial price variable
-    data["price_srch_id_rank"] = data.groupby(by="srch_id")[
-        "price_srch_id"
+    data["price_usd_srch_id_rank"] = data.groupby(by="srch_id")[
+        "price_usd_srch_id"
     ].rank(method="dense", ascending=False)
-    data["price_srch_destination_id_rank"] = data.groupby(by="srch_id")[
-        "price_srch_destination_id"
+    data["price_usd_srch_destination_id_rank"] = data.groupby(by="srch_id")[
+        "price_usd_srch_destination_id"
     ].rank(method="dense", ascending=False)
-    data["price_srch_booking_window_rank"] = data.groupby(by="srch_id")[
-        "price_srch_booking_window"
+    data["price_usd_srch_booking_window_rank"] = data.groupby(by="srch_id")[
+        "price_usd_srch_booking_window"
     ].rank(method="dense", ascending=False)
-    data["price_prop_country_id_rank"] = data.groupby(by="srch_id")[
-        "price_prop_country_id"
+    data["price_usd_prop_country_id_rank"] = data.groupby(by="srch_id")[
+        "price_usd_prop_country_id"
     ].rank(method="dense", ascending=False)
-    data["price_date_time_rank"] = data.groupby(by="srch_id")[
-        "price_date_time"
+    data["price_usd_date_time_rank"] = data.groupby(by="srch_id")[
+        "price_usd_date_time"
     ].rank(method="dense", ascending=False)
-    data["price_prop_id_rank"] = data.groupby(by="srch_id")[
-        "price_prop_id"
+    data["price_usd_prop_id_rank"] = data.groupby(by="srch_id")[
+        "price_usd_prop_id"
     ].rank(method="dense", ascending=False)
     return data

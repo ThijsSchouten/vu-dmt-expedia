@@ -3,6 +3,7 @@ import itertools as it
 import multiprocessing as mp
 
 import pickle
+import random
 
 import pandas as pd
 import xgboost as xgb
@@ -184,11 +185,11 @@ class LearnToRank:
         rval = dict(params=str(params), grid_id=grid, split_id=split, score=score,)
         return rval
 
-    def gridsearch(self, params_options, out_path=False):
+    def gridsearch(self, params_options, out_path=False, draw_n_random=False):
         """
         Runs gridsearch with supplied options. 
         """
-        self.get_permutations(params_options)
+        self.get_permutations(params_options, draw_n_random)
         grids = len(self.grid_permutations)
         splits = len(self.splits)
 
@@ -292,7 +293,7 @@ class LearnToRank:
 
         return groups
 
-    def get_permutations(self, param_dict):
+    def get_permutations(self, param_dict, draw_n_random=False):
         """
         Splits a dict with key: lists into a
         list of dicts containing all unique
@@ -301,5 +302,5 @@ class LearnToRank:
         keys, values = zip(*param_dict.items())
         self.grid_permutations = [dict(zip(keys, v)) for v in it.product(*values)]
 
-
-# %%
+        if isinstance(draw_n_random, int):
+            self.grid_permutations = random.sample(self.grid_permutations, draw_n_random)

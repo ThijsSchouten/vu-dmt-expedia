@@ -14,9 +14,7 @@ def read_datafile(fname, all_data=False, nrows=1000):
         df = pd.read_csv(fname)
     else:
         df = pd.read_csv(fname, nrows=nrows)
-    df["date_time"] = pd.to_datetime(
-        df["date_time"], format="%Y-%m-%d %H:%M:%S"
-    )
+    df["date_time"] = pd.to_datetime(df["date_time"], format="%Y-%m-%d %H:%M:%S")
     df["date_time"] = df["date_time"].apply(lambda x: x.date())
     return df
 
@@ -63,6 +61,7 @@ def drop_columns(df, cohort="train"):
     if cohort == "train":
         cols_to_drop.append("gross_bookings_usd")
 
+    print(f"  Drop columns. {cols_to_drop}")
     # Drop said columns and return new dataframe
     df2.drop(cols_to_drop, axis=1, inplace=True)
 
@@ -70,6 +69,7 @@ def drop_columns(df, cohort="train"):
 
 
 def randomise_missing_values(df, columns_to_fill):
+    print("  Randomise missing values")
     df2 = df.copy()
     for col in df.columns:
         data = df2[columns_to_fill]
@@ -81,6 +81,7 @@ def randomise_missing_values(df, columns_to_fill):
 
 
 def drop_and_impute(df, cohort="train"):
+    print("  Drop and impute")
     """
     Drops all columns with more than 30 percent of the data missing,
     and imputes the rest of the missing values.
@@ -94,11 +95,13 @@ def drop_and_impute(df, cohort="train"):
     df2 = randomise_missing_values(df2, "prop_review_score")
 
     # Impute prop_location_score2 with mean
+    print("  Impute prop_location_score2")
     df2["prop_location_score2"].fillna(
         (df2["prop_location_score2"].mean()), inplace=True
     )
 
     # Impute orig_destination_distance with median
+    print("  Impute orig_gestination_distance")
     df2["orig_destination_distance"].fillna(
         (df2["orig_destination_distance"].median()), inplace=True
     )
@@ -112,6 +115,7 @@ def impute_negative(df):
     """
     df2 = df.copy()
 
+    print("  Impute all negatives with -1")
     # Impute all missing values with -1
     df2.fillna(-1, inplace=True)
 
@@ -119,6 +123,7 @@ def impute_negative(df):
 
 
 def balance_click_classes(df):
+    print("  Balance click classes")
     click_indices = df[df.click_bool == 1].index
     random_indices = np.random.choice(
         click_indices, len(df.loc[df.click_bool == 1]), replace=False
@@ -126,9 +131,7 @@ def balance_click_classes(df):
     click_sample = df.loc[random_indices]
 
     not_click = df[df.click_bool == 0].index
-    random_indices = np.random.choice(
-        not_click, sum(df["click_bool"]), replace=False
-    )
+    random_indices = np.random.choice(not_click, sum(df["click_bool"]), replace=False)
     not_click_sample = df.loc[random_indices]
 
     df_new = pd.concat([not_click_sample, click_sample], axis=0)
@@ -137,6 +140,7 @@ def balance_click_classes(df):
 
 
 def normalise_column(df, feature, average=False):
+    print(f"  Normalise feature {feature}")
     df2 = df.copy()
     date_time_backup = df2["date_time"].copy()
     df2["date_time"] = df2["date_time"].apply(lambda x: (x.year, x.month))
@@ -179,15 +183,15 @@ def normalise_column(df, feature, average=False):
 
 def add_pricediff_feature(df, inplace=False):
     df2 = df.copy()
+
+    print("  Create price_diff_from_recent")
     # Create new feature by taking the difference between the price and the recent price.
     df2["price_diff_from_recent"] = df2["price_usd"].to_numpy() - np.exp(
         df2["prop_log_historical_price"].to_numpy()
     )
 
     # Set values of the new feature to -1 if the mean recent price is missing.
-    df2.loc[
-        df2["prop_log_historical_price"] == 0, "price_diff_from_recent"
-    ] = 0
+    df2.loc[df2["prop_log_historical_price"] == 0, "price_diff_from_recent"] = 0
 
     if inplace:
         df = df2
@@ -202,6 +206,7 @@ def add_combination_feature(df, f1, f2, inplace=False, comp=False):
     If comp=True, then a composite feature (f_new = f1 * max(f2) + f2)
     will be added.
     """
+    print(f"  Create combination of {f1} x {f2}")
     df2 = df.copy()
     # Create new name for column
     if comp:
@@ -238,7 +243,7 @@ def add_some_features(df):
     ]
     # Loop over pairs and create columns
     for f1, f2 in comb_feats:
-        print(f1, f2)
+        print(f" Create comb features {f1}, {f2}")
         df2 = add_combination_feature(df2, f1, f2)
 
     return df2
@@ -306,5 +311,5 @@ def interaction_effects(data, dep_variable, threshold):
 # data1 = drop_and_impute(data)
 # data2 = impute_negative(data)
 
-with open("./data/normalised_test-data.pickle", "rb") as f:
-    data = pickle.load(f)
+# with open("./data/normalised_test-data.pickle", "rb") as f:
+#     data = pickle.load(f)

@@ -13,7 +13,7 @@ import xgboost as xgb
 # from sklearn.metrics import ndcg_score
 
 # from lib_ndcg import custom_ndcg_score_groups
-from lib_data import *
+# from lib_data import *
 
 
 class LearnToRank:
@@ -99,14 +99,18 @@ class LearnToRank:
         """
         Split loaded data into features, labels and groups.
         """
+        print("Prep data")
+        print(" > train data")
         self.X_trn = self.train.loc[:, ~self.train.columns.isin(["qid", "rank"])].copy()
         self.y_trn = self.train.loc[:, "rank"].copy()
         self.qid_trn = self.train.loc[:, "qid"].copy()
         self.g_trn = self.groups(self.qid_trn)
 
+        print(" > test data")
         self.X_tst = self.test.loc[:, ~self.test.columns.isin(["qid", "rank"])].copy()
         self.qid_tst = self.train.loc[:, "qid"].copy()
 
+        print(" > val data")
         self.X_val = self.val.loc[:, ~self.val.columns.isin(["qid", "rank"])].copy()
         self.y_val = self.val.loc[:, "rank"].copy()
         self.qid_val = self.val.loc[:, "qid"].copy()
@@ -114,6 +118,8 @@ class LearnToRank:
 
         if drop_cols:
             self.drop_redundant_cols()
+
+        print(" > DMatrices")
 
         self.train_DMatrix = xgb.DMatrix(self.X_trn, self.y_trn)
         self.train_DMatrix.set_group(self.g_trn)
@@ -128,6 +134,7 @@ class LearnToRank:
         Fits XGBRanker on a subset of indices.
         Returns the NDCG score.
         """
+        print("Fit XGB.")
         params_to_save = params.copy()
         start = time.time()
 
@@ -186,10 +193,11 @@ class LearnToRank:
             cores = mp.cpu_count()
             print(f"{cores} cores found. Using all")
 
+        print("Get permutations:")
         self.get_permutations(params_options, n_rounds=n_rounds)
         grids = len(self.grid_permutations)
 
-        print(f"Starting {grids} runs.")
+        print(f"  > {grids} runs.")
 
         results = []
         args = []
@@ -198,6 +206,7 @@ class LearnToRank:
             if multip:
                 args.append([0, 0, params, gid, 1])
             else:
+                print("Starting XGB")
                 results.append(self.fit_XGB(0, 0, params, gid, 1, verbose))
 
         if multip:

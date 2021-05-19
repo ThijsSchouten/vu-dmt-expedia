@@ -12,7 +12,7 @@ import xgboost as xgb
 # from sklearn.model_selection import GroupShuffleSplit
 # from sklearn.metrics import ndcg_score
 
-from lib_ndcg import custom_ndcg_score_groups
+# from lib_ndcg import custom_ndcg_score_groups
 from lib_data import *
 
 
@@ -23,9 +23,14 @@ class LearnToRank:
         """
         Loads data from picklefiles.
         """
+        print("Loading data..", end=" ")
+        print("Train: ..", end=" ")
         self.train = pd.read_pickle(train_df_pickle)
+        print("done. Test: ..", end=" ")
         self.test = pd.read_pickle(test_df_pickle)
+        print("done. Val: ..", end=" ")
         self.val = pd.read_pickle(val_df_pickle)
+        print("done")
 
     def load_results(self, results_df_pickle):
         """
@@ -204,6 +209,8 @@ class LearnToRank:
         if out_path:
             self.results.to_pickle(out_path)
 
+        self.get_best_params()
+
     def get_best_params(self):
         """
         Reads results dataframe and sorts by score.
@@ -259,21 +266,17 @@ class LearnToRank:
         kaggle_df = output[["srch_id", "prop_id"]].copy()
         kaggle_df.to_csv(outfile, index=False)
 
-    def save_results(self, y_true, y_preds, qid):
-        self.results_df = pd.DataFrame(
-            {"predictions": y_preds, "truth": y_true, "groups": qid}
-        )
-
     def save_model(self, fpath):
         self.best_model.save_model(fpath)
 
     def save_model_meta(self, fpath):
         out_obj = dict(
-            fi=self.best_model.feature_importances_,
+            fi=self.best_model.get_score(importance_type="gain"),
             names=self.X_trn.columns,
             model=self.best_model,
             X_val=self.X_val,
             y_val=self.y_val,
+            grid_df=self.results,
         )
 
         pickle.dump(out_obj, open(fpath, "wb"))

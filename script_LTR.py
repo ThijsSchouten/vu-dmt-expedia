@@ -1,6 +1,5 @@
 # %%
 from lib_LTR import *
-import pickle
 
 ID = "A1"
 
@@ -32,7 +31,7 @@ params = dict(
     subsample=[0.9, 0.6, 0.4],
 )
 params = dict(
-    compute_importances=[True],
+    # compute_importances=[True],
     tree_method=["hist"],
     booster=["gbtree"],
     objective=["rank:pairwise"],
@@ -44,7 +43,7 @@ params = dict(
     subsample=[0.9],
 )
 
-ranker.gridsearch(params, out_path=f"output/results/{ID}_gridsearch.p")
+ranker.gridsearch(params, out_path=f"output/results/{ID}_gridsearch.p", multip=False)
 
 # ranker.load_results("output/gridsearch_0X_TEST.pickle")
 
@@ -53,19 +52,16 @@ ranker.get_best_params()
 gridsearch_results = ranker.gridsearch_results
 
 ranker.train_best_model(f"output/results/{ID}_kaggle_pred.csv")
-ranker.best_model.save_model(f"output/results/{ID}_best_model.p")
 
-#%% Write files to pickle for later analysis
-fi = ranker.best_model.feature_importances_
-names = ranker.X_trn.columns
-bm = ranker.best_model
-X_val = ranker.X_val
-y_val = ranker.y_val
-out_obj = dict(fi=fi, names=names, model=bm, X_val=X_val, y_val=y_val)
+#%%
+ranker.save_model(f"output/results/{ID}_best_model.p")
+ranker.save_model_results(f"output/results/{ID}_feature_importances.p")
 
-fname = f"output/results/{ID}_feature_importances.p"
-pickle.dump(out_obj, open(fname, "wb"))
 
-# feature_ranker.best_model.feature_importances_
+def main():
+    pass
+
 
 # %%
+if __name__ == "__main__":
+    main()

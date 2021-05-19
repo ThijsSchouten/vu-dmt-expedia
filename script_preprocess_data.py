@@ -1,6 +1,7 @@
 import pickle
 from lib_data import *
 from script_add_features import *
+
 import random
 import numpy
 
@@ -12,7 +13,7 @@ def create_pickle(source, target, cohort, imputation="standard"):
     print(
         f"\n  Source: {source}\n  Target: {target}\n  Cohort:{cohort}\n  Imputation:{imputation}\n{'-'*70}"
     )
-    data = read_datafile(source, all_data=False, nrows=1000)
+    data = read_datafile(source, all_data=False, nrows=10000)
     print("CSV loaded")
 
     print("Adding price_diff feature")
@@ -84,24 +85,24 @@ def main():
             cohort="train",
             imputation="negative",
         )
-        create_pickle(
-            "./data/test_set_VU_DM.csv",
-            "./data/normalised_test-data_2.pickle",
-            cohort="test",
-            imputation="negative",
-        )
-        create_pickle(
-            "./data/training_set_VU_DM.csv",
-            "./data/normalised_unbalanced_training-data.pickle",
-            cohort="train",
-            imputation="standard",
-        )
-        create_pickle(
-            "./data/test_set_VU_DM.csv",
-            "./data/normalised_test-data.pickle",
-            cohort="test",
-            imputation="standard",
-        )
+        # create_pickle(
+        #     "./data/test_set_VU_DM.csv",
+        #     "./data/normalised_test-data_2.pickle",
+        #     cohort="test",
+        #     imputation="negative",
+        # )
+        # create_pickle(
+        #     "./data/training_set_VU_DM.csv",
+        #     "./data/normalised_unbalanced_training-data.pickle",
+        #     cohort="train",
+        #     imputation="standard",
+        # )
+        # create_pickle(
+        #     "./data/test_set_VU_DM.csv",
+        #     "./data/normalised_test-data.pickle",
+        #     cohort="test",
+        #     imputation="standard",
+        # )
 
         # normalise_remainder("./data/normalised_unbalanced_training-data.pickle")
         # normalise_remainder("./data/normalised_test-data.pickle")

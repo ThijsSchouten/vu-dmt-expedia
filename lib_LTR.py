@@ -119,9 +119,9 @@ class LearnToRank:
         if drop_cols:
             self.drop_redundant_cols()
 
-        assert len(self.X_trn.columns) == len(
-            self.X_tst.columns
-        ), "Columns X train & X test not identical. Set drop_redundant to True to solve."
+        # assert len(self.X_trn.columns) == len(
+        #     self.X_tst.columns
+        # ), f"Columns X train & X test not identical. Set drop_redundant to True to solve.\nTrain: {self.X_trn.columns}\nTst: {self.X_tst.columns}"
 
     def create_groupsplits(self, test_size=0.2, splits=1):
         """
@@ -184,10 +184,14 @@ class LearnToRank:
         rval = dict(params=str(params), grid_id=grid, split_id=split, score=score,)
         return rval
 
-    def gridsearch(self, params_options, out_path=False):
+    def gridsearch(self, params_options, out_path=False, multip=False, cores=-1):
         """
         Runs gridsearch with supplied options. 
         """
+        if multip and cores == -1:
+            cores = mp.cpu_count()
+            print(f"{cores} cores found. Using all")
+
         self.get_permutations(params_options)
         grids = len(self.grid_permutations)
         splits = len(self.splits)
@@ -195,13 +199,26 @@ class LearnToRank:
         print(f"{grids} param settings  x  {splits} splits  = {grids*splits} runs")
 
         results = []
+        args = []
 
         for gid, params in enumerate(self.grid_permutations):
             if self.custom_validation:
-                results.append(self.fit_XGB(0, 0, params, gid, 1))
+                if multip:
+                    args.append([0, 0, params, gid, 1])
+                else:
+                    results.append(self.fit_XGB(0, 0, params, gid, 1))
             else:
                 for sid, (tr_idx, val_idx) in enumerate(self.splits):
-                    results.append(self.fit_XGB(tr_idx, val_idx, params, gid, sid + 1))
+                    if multip:
+                        args.append([tr_idx, val_idx, params, gid, sid + 1])
+                    else:
+                        results.append(
+                            self.fit_XGB(tr_idx, val_idx, params, gid, sid + 1)
+                        )
+
+        if multip:
+            with mp.Pool(cores) as pool:
+                results = pool.starmap(self.fit_XGB, args)
 
         self.results = pd.DataFrame(results)
 
@@ -267,6 +284,25 @@ class LearnToRank:
         self.results_df = pd.DataFrame(
             {"predictions": y_preds, "truth": y_true, "groups": qid}
         )
+
+    def save_model(self, fpath):
+        self.best_model.save_model(fpath)
+
+    def save_model_results(self, fpath):
+        # fi = ranker.best_model.feature_importances_
+        # names = ranker.X_trn.columns
+        # bm = ranker.best_model
+        # X_val = ranker.X_val
+        # y_val = ranker.y_val
+        out_obj = dict(
+            fi=self.best_model.feature_importances_,
+            names=self.X_trn.columns,
+            model=self.best_model,
+            X_val=self.X_val,
+            y_val=self.y_val,
+        )
+
+        pickle.dump(out_obj, open(fpath, "wb"))
 
     @staticmethod
     def groups(input):

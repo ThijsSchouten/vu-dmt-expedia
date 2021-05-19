@@ -7,6 +7,7 @@ import datetime
 from statsmodels.regression import linear_model
 from sklearn.preprocessing import PolynomialFeatures
 from contextlib import redirect_stdout
+from lib_profiler import profile
 
 
 def read_datafile(fname, all_data=False, nrows=1000):
@@ -139,6 +140,7 @@ def balance_click_classes(df):
     return df_new
 
 
+@profile
 def normalise_column(df, feature, average=False):
     print(f"  Normalise feature {feature}")
     df2 = df.copy()

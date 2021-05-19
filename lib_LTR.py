@@ -3,6 +3,7 @@ import itertools as it
 import multiprocessing as mp
 
 import pickle
+import random
 
 import pandas as pd
 import xgboost as xgb
@@ -328,7 +329,7 @@ class LearnToRank:
 
         return groups
 
-    def get_permutations(self, param_dict):
+    def get_permutations(self, param_dict, draw_n_random=False):
         """
         Splits a dict with key: lists into a
         list of dicts containing all unique
@@ -337,5 +338,8 @@ class LearnToRank:
         keys, values = zip(*param_dict.items())
         self.grid_permutations = [dict(zip(keys, v)) for v in it.product(*values)]
 
+        if isinstance(draw_n_random, int):
+            self.grid_permutations = random.sample(
+                self.grid_permutations, draw_n_random
+            )
 
-# %%

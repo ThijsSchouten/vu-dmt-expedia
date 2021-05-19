@@ -5,9 +5,12 @@
 .__pycache__
 __pycache__
 
+data/*/*.p
+data/*.p
 data/*.csv
 data/*.pickle
 data/split/*.pickle
 output/EDA_histograms/*.png
-output/results/*.p*
+output/results/*.p
 output/results/*.csv
+output/results/*.txt

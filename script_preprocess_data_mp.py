@@ -4,6 +4,7 @@ from script_add_features import *
 
 import random
 import numpy
+import multiprocessing as mp
 
 import warnings
 import time
@@ -13,7 +14,7 @@ def create_pickle(source, target, cohort, imputation="standard"):
     print(
         f"\n  Source: {source}\n  Target: {target}\n  Cohort:{cohort}\n  Imputation:{imputation}\n{'-'*70}"
     )
-    data = read_datafile(source, all_data=False, nrows=10000)
+    data = read_datafile(source, all_data=True)  # , nrows=10000)
     print("CSV loaded")
 
     print("Adding price_diff feature")
@@ -75,34 +76,39 @@ def main():
     random.seed(42)
     np.random.seed(42)
 
+    pool = mp.Pool(4)
+
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", r"All-NaN (slice|axis) encountered")
-
         # Create pickles
-        create_pickle(
-            "./data/training_set_VU_DM.csv",
-            "./data/normalised_unbalanced_training-data_2.pickle",
-            cohort="train",
-            imputation="negative",
-        )
-        # create_pickle(
-        #     "./data/test_set_VU_DM.csv",
-        #     "./data/normalised_test-data_2.pickle",
-        #     cohort="test",
-        #     imputation="negative",
-        # )
-        # create_pickle(
-        #     "./data/training_set_VU_DM.csv",
-        #     "./data/normalised_unbalanced_training-data.pickle",
-        #     cohort="train",
-        #     imputation="standard",
-        # )
-        # create_pickle(
-        #     "./data/test_set_VU_DM.csv",
-        #     "./data/normalised_test-data.pickle",
-        #     cohort="test",
-        #     imputation="standard",
-        # )
+        args = [
+            [
+                "./data/training_set_VU_DM.csv",
+                "./data/normalised_unbalanced_training-data_2.pickle",
+                "train",
+                "negative",
+            ],
+            [
+                "./data/test_set_VU_DM.csv",
+                "./data/normalised_test-data_2.pickle",
+                "test",
+                "negative",
+            ],
+            # [
+            #     "./data/training_set_VU_DM.csv",
+            #     "./data/normalised_unbalanced_training-data.pickle",
+            #     "train",
+            #     "standard",
+            # ],
+            # [
+            #     "./data/test_set_VU_DM.csv",
+            #     "./data/normalised_test-data.pickle",
+            #     "test",
+            #     "standard",
+            # ],
+        ]
+
+        results = pool.starmap(create_pickle, args)
 
         # normalise_remainder("./data/normalised_unbalanced_training-data.pickle")
         # normalise_remainder("./data/normalised_test-data.pickle")

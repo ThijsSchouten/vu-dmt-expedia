@@ -3,36 +3,34 @@ import itertools as it
 import multiprocessing as mp
 
 import pickle
+import random
+import time
 
 import pandas as pd
 import xgboost as xgb
 
-from sklearn.model_selection import GroupShuffleSplit
-from sklearn.metrics import ndcg_score
+# from sklearn.model_selection import GroupShuffleSplit
+# from sklearn.metrics import ndcg_score
 
-from lib_ndcg import custom_ndcg_score_groups
-from lib_data import *
+# from lib_ndcg import custom_ndcg_score_groups
+# from lib_data import *
 
 
 class LearnToRank:
     custom_validation = False
 
-    def load_data(self, train_df_pickle, test_df_pickle, val_df_pickle=False):
+    def load_data(self, train_df_pickle, test_df_pickle, val_df_pickle):
         """
         Loads data from picklefiles.
         """
+        print("Loading data..", end=" ")
+        print("Train: ..", end=" ")
         self.train = pd.read_pickle(train_df_pickle)
+        print("done. Test: ..", end=" ")
         self.test = pd.read_pickle(test_df_pickle)
-
-        print("Loaded data..")
-        print("  Train shape:", self.train.shape)
-        print("  Test shape:", self.test.shape)
-
-        if val_df_pickle != False:
-            self.val = pd.read_pickle(val_df_pickle)
-            self.custom_validation = True
-            self.splits = [1]
-            print("  Val shape:", self.val.shape)
+        print("done. Val: ..", end=" ")
+        self.val = pd.read_pickle(val_df_pickle)
+        print("done")
 
     def load_results(self, results_df_pickle):
         """
@@ -50,17 +48,20 @@ class LearnToRank:
         print("Dropping redundant columns.")
         test_columns = self.X_tst.columns
         train_columns = self.X_trn.columns
+        val_columns = self.X_val.columns
 
         cols_to_drop = [x for x in train_columns if x not in test_columns]
+        cols_to_drop.append("date_time")
+        self.X_tst.drop(columns=["date_time"], inplace=True)
+
         self.X_trn.drop(columns=cols_to_drop, inplace=True)
         print(f"  Dropped columns {cols_to_drop} from X_train.")
 
-        if self.custom_validation:
-            val_columns = self.X_val.columns
-            add_drop = [x for x in val_columns if x not in train_columns]
-            all_drop = cols_to_drop + add_drop
-            self.X_val.drop(columns=all_drop, inplace=True)
-            print(f"  Dropped columns {all_drop} from X_val.")
+        add_drop = [x for x in val_columns if x not in train_columns]
+        all_drop = cols_to_drop + add_drop
+        self.X_val.drop(columns=all_drop, inplace=True)
+
+        print(f"  Dropped columns {all_drop} from X_val.")
 
     def add_rank(self, book_score=5, click_score=1):
         """ 
@@ -76,9 +77,7 @@ class LearnToRank:
             return 0
 
         self.train["rank"] = self.train.apply(lambda x: rank(x), axis=1)
-
-        if self.custom_validation:
-            self.val["rank"] = self.val.apply(lambda x: rank(x), axis=1)
+        self.val["rank"] = self.val.apply(lambda x: rank(x), axis=1)
 
     def add_qid(self, att, sort=True):
         """
@@ -87,16 +86,12 @@ class LearnToRank:
         """
         self.train.rename(columns={att: "qid"}, inplace=True)
         self.test.rename(columns={att: "qid"}, inplace=True)
-
-        if self.custom_validation:
-            self.val.rename(columns={att: "qid"}, inplace=True)
+        self.val.rename(columns={att: "qid"}, inplace=True)
 
         if sort:
             self.train.sort_values(by="qid", inplace=True)
             self.test.sort_values(by="qid", inplace=True)
-
-            if self.custom_validation:
-                self.val.sort_values(by="qid", inplace=True)
+            self.val.sort_values(by="qid", inplace=True)
 
         # unnecessary
 
@@ -104,131 +99,146 @@ class LearnToRank:
         """
         Split loaded data into features, labels and groups.
         """
+        print("Prep data")
+        print(" > train data")
         self.X_trn = self.train.loc[:, ~self.train.columns.isin(["qid", "rank"])].copy()
         self.y_trn = self.train.loc[:, "rank"].copy()
         self.qid_trn = self.train.loc[:, "qid"].copy()
+        self.g_trn = self.groups(self.qid_trn)
 
+        print(" > test data")
         self.X_tst = self.test.loc[:, ~self.test.columns.isin(["qid", "rank"])].copy()
         self.qid_tst = self.train.loc[:, "qid"].copy()
 
-        if self.custom_validation:
-            self.X_val = self.val.loc[:, ~self.val.columns.isin(["qid", "rank"])].copy()
-            self.y_val = self.val.loc[:, "rank"].copy()
-            self.qid_val = self.val.loc[:, "qid"].copy()
+        print(" > val data")
+        self.X_val = self.val.loc[:, ~self.val.columns.isin(["qid", "rank"])].copy()
+        self.y_val = self.val.loc[:, "rank"].copy()
+        self.qid_val = self.val.loc[:, "qid"].copy()
+        self.g_val = self.groups(self.qid_val)
 
         if drop_cols:
             self.drop_redundant_cols()
 
-        assert len(self.X_trn.columns) == len(
-            self.X_tst.columns
-        ), "Columns X train & X test not identical. Set drop_redundant to True to solve."
+        print(" > DMatrices")
 
-    def create_groupsplits(self, test_size=0.2, splits=1):
-        """
-        Splits the datasets n times, enforcing
-        group seperation. 
-        """
-        if self.custom_validation:
-            print("Note: validation set supplied. Skipping groupsplits.")
-        else:
-            gss = GroupShuffleSplit(test_size=test_size, n_splits=splits)
-            self.splits = list(gss.split(self.X_trn, groups=self.qid_trn))
+        self.train_DMatrix = xgb.DMatrix(self.X_trn, self.y_trn)
+        self.train_DMatrix.set_group(self.g_trn)
 
-    def fit_XGB(self, tr_idx, val_idx, params, grid, split):
+        self.val_DMatrix = xgb.DMatrix(self.X_val, self.y_val)
+        self.val_DMatrix.set_group(self.g_val)
+
+        self.tst_DMatrix = xgb.DMatrix(self.X_tst)
+
+    def fit_XGB(self, tr_idx, val_idx, params, grid, split, verbose=False):
         """
         Fits XGBRanker on a subset of indices.
         Returns the NDCG score.
         """
+        print("Fit XGB.")
+        params_to_save = params.copy()
+        start = time.time()
 
-        if self.custom_validation:
-            X_train = self.X_trn
-            y_train = self.y_trn
-            g_train = self.groups(self.qid_trn)
+        rounds = params.pop("num_boost_round")
+        esr = params.pop("early_stopping_rounds")
 
-            X_val = self.X_val
-            y_val = self.y_val
-            qid_val = self.qid_val
-            g_val = self.groups(qid_val)
-        else:
-            X_train = self.X_trn.iloc[tr_idx]
-            y_train = self.y_trn.iloc[tr_idx]
-            g_train = self.groups(self.qid_trn.iloc[tr_idx])
+        model = xgb.train(
+            params,
+            self.train_DMatrix,
+            num_boost_round=rounds,
+            evals=[(self.val_DMatrix, "validation")],
+            early_stopping_rounds=esr,
+            verbose_eval=verbose,
+        )
 
-            X_val = self.X_trn.iloc[val_idx]
-            y_val = self.y_trn.iloc[val_idx]
-            qid_val = self.qid_trn.iloc[val_idx]
-            g_val = self.groups(qid_val)
+        score = model.attributes()["best_score"]
 
-        model = xgb.XGBRanker(**params)
-        model.fit(X_train, y_train, group=g_train, verbose=True)
-        y_val_pred = model.predict(X_val)
-
-        # self.save_results(y_val, y_pred, qid_val)
-        # score = ndcg_score([y_val, qid_val], [y_val_pred, qid_val], k=5)
-        # print("NDCG scikitlearn: ", score)
-
-        score = custom_ndcg_score_groups(y_val, y_val_pred, g_val, k=5)
+        # score = custom_ndcg_score_groups(self.y_val, y_val_pred, self.g_val, k=5)
         pparams = {
-            key: params[key]
+            key: round(params_to_save[key], 2)
             for key in [
-                "objective",
-                "eta",
                 "max_depth",
-                "n_estimators",
+                "eta",
+                "gamma",
+                "alpha",
+                "reg_lambda",
+                "num_parallel_tree",
                 "subsample",
                 "colsample_bytree",
+                "min_child_weight",
+                # "num_boost_round",
             ]
         }
-        print(f"G: {grid} / S: {split} NDCG@5: {round(score,4)}  {pparams}")
 
-        rval = dict(params=str(params), grid_id=grid, split_id=split, score=score,)
-        return rval
+        end = time.time()
 
-    def gridsearch(self, params_options, out_path=False):
+        print(f"{grid} - {round(end-start,1)}s NDCG@5: {score} - {pparams}")
+        params_to_save["score"] = score
+        params_to_save["id"] = grid
+
+        return params_to_save
+
+    def gridsearch(
+        self,
+        params_options,
+        out_path=False,
+        multip=False,
+        n_rounds=None,
+        verbose=False,
+        cores=-1,
+    ):
         """
         Runs gridsearch with supplied options. 
         """
-        self.get_permutations(params_options)
-        grids = len(self.grid_permutations)
-        splits = len(self.splits)
+        if multip and cores == -1:
+            cores = mp.cpu_count()
+            print(f"{cores} cores found. Using all")
 
-        print(f"{grids} param settings  x  {splits} splits  = {grids*splits} runs")
+        print("Get permutations:")
+        self.get_permutations(params_options, n_rounds=n_rounds)
+        grids = len(self.grid_permutations)
+
+        print(f"  > {grids} runs.")
 
         results = []
+        args = []
 
         for gid, params in enumerate(self.grid_permutations):
-            if self.custom_validation:
-                results.append(self.fit_XGB(0, 0, params, gid, 1))
+            if multip:
+                args.append([0, 0, params, gid, 1])
             else:
-                for sid, (tr_idx, val_idx) in enumerate(self.splits):
-                    results.append(self.fit_XGB(tr_idx, val_idx, params, gid, sid + 1))
+                print("Starting XGB")
+                results.append(self.fit_XGB(0, 0, params, gid, 1, verbose))
+
+        if multip:
+            with mp.Pool(cores) as pool:
+                results = pool.starmap(self.fit_XGB, args)
 
         self.results = pd.DataFrame(results)
 
         if out_path:
             self.results.to_pickle(out_path)
 
+        self.get_best_params()
+
     def get_best_params(self):
         """
         Reads results dataframe and sorts by score.
         Sets self.best_params to the best parameters.
         """
-        # assert self.results, "Run gridsearch or load results first."
-        groupby_columns = list(self.results.columns)
+        # # assert self.results, "Run gridsearch or load results first."
+        # groupby_columns = list(self.results.columns)
 
-        for col in ["split_id", "score"]:
-            groupby_columns.remove(col)
+        # for col in ["split_id", "score"]:
+        #     groupby_columns.remove(col)
 
-        grouped = self.results.groupby(groupby_columns).mean().reset_index()
-        grouped.drop(columns=["split_id"], inplace=True)
-        grouped.sort_values(by=["score"], inplace=True)
+        # grouped = self.results.groupby(groupby_columns).mean().reset_index()
+        # grouped.drop(columns=["split_id"], inplace=True)
 
-        self.gridsearch_results = grouped
+        self.results.sort_values(by=["score"], inplace=True)
 
-        best = grouped.iloc[-1]
-        self.best_params = eval(best["params"])
-
-        return grouped
+        self.best_params = self.results.iloc[-1].to_dict()
+        # self.best_params = best
+        return self.best_params
 
     def train_best_model(self, outfile, custom_hyper=None, save_model=None):
         """
@@ -237,24 +247,26 @@ class LearnToRank:
         best available through gridsearch.
         """
         if custom_hyper is not None:
-            params = custom_hyper
+            params = custom_hyper.copy()
         else:
-            params = self.best_params
+            params = self.best_params.copy()
 
-        model = xgb.XGBRanker(**params)
+        rounds = params.pop("num_boost_round")
+        esr = params.pop("early_stopping_rounds")
 
-        X_train = self.X_trn
-        y_train = self.y_trn
-        g_train = self.groups(self.qid_trn)
-
-        model.fit(X_train, y_train, group=g_train, verbose=True)
+        model = xgb.train(
+            params,
+            self.train_DMatrix,
+            num_boost_round=rounds,
+            evals=[(self.val_DMatrix, "validation")],
+            early_stopping_rounds=esr,
+            verbose_eval=True,
+        )
 
         self.best_model = model
-        # if save_model is not None:
 
-        # Predict on the kaggle set
         output = self.test.copy()
-        output["scores"] = model.predict(self.X_tst)
+        output["scores"] = model.predict(self.tst_DMatrix)
 
         # Write to sorted csv
         output = output.sort_values(by=["qid", "scores"], ascending=[True, False])
@@ -263,10 +275,20 @@ class LearnToRank:
         kaggle_df = output[["srch_id", "prop_id"]].copy()
         kaggle_df.to_csv(outfile, index=False)
 
-    def save_results(self, y_true, y_preds, qid):
-        self.results_df = pd.DataFrame(
-            {"predictions": y_preds, "truth": y_true, "groups": qid}
+    def save_model(self, fpath):
+        self.best_model.save_model(fpath)
+
+    def save_model_meta(self, fpath):
+        out_obj = dict(
+            fi=self.best_model.get_score(importance_type="gain"),
+            names=self.X_trn.columns,
+            model=self.best_model,
+            X_val=self.X_val,
+            y_val=self.y_val,
+            grid_df=self.results,
         )
+
+        pickle.dump(out_obj, open(fpath, "wb"))
 
     @staticmethod
     def groups(input):
@@ -292,7 +314,7 @@ class LearnToRank:
 
         return groups
 
-    def get_permutations(self, param_dict):
+    def get_permutations(self, param_dict, n_rounds=False):
         """
         Splits a dict with key: lists into a
         list of dicts containing all unique
@@ -301,5 +323,11 @@ class LearnToRank:
         keys, values = zip(*param_dict.items())
         self.grid_permutations = [dict(zip(keys, v)) for v in it.product(*values)]
 
-
-# %%
+        if n_rounds:
+            # If n_rounds > len(grid_perm)
+            # then select all options.
+            permcount = len(self.grid_permutations)
+            if n_rounds > permcount:
+                n_rounds = permcount
+                print(f"selected all {n_rounds} permutations")
+            self.grid_permutations = random.sample(self.grid_permutations, n_rounds)
